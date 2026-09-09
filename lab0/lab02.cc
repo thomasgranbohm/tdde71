@@ -6,117 +6,67 @@
 #include <iomanip>
 #include <algorithm> // for std::sort
 
-struct Time
+
+class Runner
 {
-    int hours;
-    int minutes;
-    int seconds;
-
-public: // Set a default time to
-    Time() : hours{0}, minutes{0}, seconds{0} {}
-
-    int GetTotalSeconds() const
-    {
-        return hours * 60 * 60 + minutes * 60 + seconds;
-    }
-
-    std::string ToString() const
-    {
-        std::stringstream ss;
-
-        // String building
-        ss << std::setfill('0')
-           << hours
-           << ':'
-           << std::right
-           << std::setw(2)
-           << minutes
-           << ':'
-           << std::setw(2)
-           << seconds;
-
-        return ss.str();
-    }
-};
-
-struct Runner
-{
-    std::string name;
-    Time time;
-
+    
 public:
-    Runner(const std::string &line) : name{"John Doe"}, time{}
+    Runner(const std::string &line) : m_Hours{13}, m_Minutes{37}, m_Seconds{0}, m_Name{"John Doe"}
     {
         // Init runner from full line
         std::stringstream ss{line};
-        ss >> name;
-        ss >> time.hours;
-        ss >> time.minutes;
-        ss >> time.seconds;
+        ss >> m_Name;
+        ss >> m_Hours;
+        ss >> m_Minutes;
+        ss >> m_Seconds;
     }
-
+    
+    unsigned int GetHours() const { return m_Hours; };
+    unsigned int GetMinutes() const { return m_Minutes; };
+    unsigned int GetSeconds() const { return m_Seconds; };
+    std::string GetName() const { return m_Name; }
+    
+    void SetHours(unsigned int hours) { m_Hours = hours; };
+    void SetMinutes(unsigned int minutes) { m_Minutes = minutes; };
+    void SetSeconds(unsigned int seconds) { m_Seconds = seconds; };
+    void SetName(const std::string& name) {m_Name = name; }
+    
     std::string ToString() const
     {
         std::string s;
         std::stringstream ss;
-
+        
         // String building again
         ss << std::right
-           << std::setw(9)
-           << name
-           << " | "
-           << time.ToString();
-
+        << std::setw(9)
+        << m_Name
+        << " | "
+        << std::setfill('0')
+        << m_Hours
+        << ':'
+        << std::right
+        << std::setw(2)
+        << m_Minutes
+        << ':'
+        << std::setw(2)
+        << m_Seconds;
+        
         std::getline(ss, s);
         return s;
     }
+    
+    unsigned int GetTotalSeconds() const
+    {
+        return m_Hours * 60 * 60 + m_Minutes * 60 + m_Seconds;
+    }
+    
+private:
+    unsigned int m_Hours;
+    unsigned int m_Minutes;
+    unsigned int m_Seconds;
+    std::string m_Name;
 };
 
-// std::ifstream open_file()
-// {
-//     // Get filename
-//     std::cout << "Ange filnamn: " << std::flush;
-//     std::string filename;
-//     std::cin >> filename;
-
-//     // Open file
-//     std::ifstream input_file{filename};
-
-//     // Print error message if file didn't open and restart function.
-//     if (input_file.is_open() == false)
-//     {
-//         std::cerr << "FEL: Filen gick inte att öppna!" << std::endl;
-//         return open_file(); // Recussion maxxing
-//     }
-
-//     return input_file;
-// }
-
-// int get_n_rows(int max)
-// {
-//     // Clear input buffer
-//     std::cin.clear();
-//     std::cin.ignore(1024, '\n');
-
-//     std::cout << "Ange antal rader: " << std::flush;
-//     int n_rows{};
-
-//     if (std::cin >> n_rows)
-//     {
-//         if (n_rows <= 0 || n_rows > max)
-//         {
-//             std::cerr << "FEL: Det finns inte " << n_rows << " rader i filen." << std::endl;
-//             return get_n_rows(max);
-//         }
-//     }
-//     else
-//     {
-//         std::cerr << "FEL: Inmatningen måste vara ett heltal!" << std::endl;
-//         return get_n_rows(max);
-//     }
-
-//     return n_rows;
-// }
 
 std::ifstream open_file()
 {
@@ -186,7 +136,7 @@ int main()
               [](Runner a, Runner b)
               {
                   // If true, put a before b
-                  return a.time.GetTotalSeconds() < b.time.GetTotalSeconds();
+                  return a.GetTotalSeconds() < b.GetTotalSeconds();
               });
 
     std::cout << "   Namn   |   Tid   \n"
