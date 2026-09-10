@@ -192,8 +192,8 @@ bool Time::operator!=(const Time &b) const
     return this->get_timestamp() != b.get_timestamp();
 };
 
-std::ostream &Time::operator<<(std::ostream &os)
+std::ostream &operator<<(std::ostream &os, const Time &b)
 {
-    os << this->to_string();
+    os << b.to_string();
     return os;
 };

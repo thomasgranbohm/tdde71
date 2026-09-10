@@ -49,6 +49,8 @@ public:
     bool operator>=(const Time &b) const;
     bool operator==(const Time &b) const;
     bool operator!=(const Time &b) const;
-    std::ostream &operator<<(std::ostream &os);
 };
+
+std::ostream &operator<<(std::ostream &os, const Time &a);
+
 #endif

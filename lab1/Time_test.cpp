@@ -106,6 +106,10 @@ TEST_CASE("Time stamps")
     Time e{12, 30, 10, 300};
     CHECK(e.to_string() == "12:30:10.300");
     CHECK(e.to_string(true) == "12:30:10.300pm");
+
+    Time f{"12:30:10.300"};
+    CHECK(f.to_string() == "12:30:10.300");
+    CHECK(f.to_string(true) == "12:30:10.300pm");
 }
 
 TEST_CASE("Time stamp creation")
@@ -192,7 +196,7 @@ TEST_CASE("Operators")
     SECTION("Streaming")
     {
         Time a{13, 37, 20, 123};
-        cout << &a << endl; // TODO: Känns fel typ
+        cout << a << endl; // TODO: Känns fel typ
         // FIXME: Blir fel hehehe
     }
 }
