@@ -6,17 +6,24 @@
 #define ERROR_HOUR_RANGE "Hours outside range."
 #define ERROR_MINUTE_RANGE "Minutes outside range."
 #define ERROR_SECOND_RANGE "Seconds outside range."
+#define ERROR_MILLISECOND_RANGE "Milliseconds outside range."
 #define ERROR_VALID_INTEGER "Input was not an integer."
 #define ERROR_ABNORMAL_TIMESTAMP "Abnormal timestamp."
+#define ERROR_ILLEGAL_CHAR "Illegal char."
+
+#define ASCII_DOT 46
+#define ASCII_ZERO 48
+#define ASCII_NINE 57
+#define ASCII_COLON 58
 
 struct Time
 {
 private:
-    int hour, minute, second;
+    int hour, minute, second, milliseconds;
     void check_values();
 
 public:
-    Time(int hour, int minute, int second);
+    Time(int _hour = 0, int _minute = 0, int _second = 0, int _milliseconds = 0);
     Time(const std::string &s);
 
     bool is_am() const;
@@ -25,7 +32,8 @@ public:
 
     inline int get_hour() const { return hour; }
     inline int get_minute() const { return minute; }
-    inline int get_seconds() const { return second; }
+    inline int get_second() const { return second; }
+    inline int get_millisecond() const { return milliseconds; }
 
     inline int get_timestamp() const { return hour * 60 * 60 + minute * 60 + second; }
 };

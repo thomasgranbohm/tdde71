@@ -4,75 +4,88 @@
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 void Time::check_values()
 {
     if (this->hour < 0 || this->hour >= 24)
     {
-        throw std::logic_error(ERROR_HOUR_RANGE);
+        throw std::out_of_range(ERROR_HOUR_RANGE);
     }
     if (this->minute < 0 || this->minute >= 60)
     {
-        throw std::logic_error(ERROR_MINUTE_RANGE);
+        throw std::out_of_range(ERROR_MINUTE_RANGE);
     }
     if (this->second < 0 || this->second >= 60)
     {
-        throw std::logic_error(ERROR_SECOND_RANGE);
+        throw std::out_of_range(ERROR_SECOND_RANGE);
+    }
+    if (this->milliseconds < 0 || this->milliseconds >= 1000)
+    {
+        throw std::out_of_range(ERROR_MILLISECOND_RANGE);
     }
 }
 
-Time::Time(int hour, int minute, int second) : hour{0}, minute{0}, second{0}
+Time::Time(int _hour, int _minute, int _second, int _milliseconds) : hour{_hour}, minute{_minute}, second{_second}, milliseconds{_milliseconds}
 {
-    this->hour = hour;
-    this->minute = minute;
-    this->second = second;
 
     Time::check_values();
 }
 
-Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}
+int get_next_integer(std::stringstream &ss, int n)
 {
+    char c{};
+    std::stringstream cs;
+
+    for (int i = 0; i < n; i++)
+    {
+        ss >> c;
+
+        if (ss.fail())
+            throw std::logic_error(ERROR_VALID_INTEGER);
+        else if (c < ASCII_ZERO || c > ASCII_NINE)
+            throw std::logic_error(ERROR_ILLEGAL_CHAR);
+
+        cs << c;
+    }
+
+    return std::stoi(cs.str());
+}
+
+void skip_char(std::stringstream &ss, char desired)
+{
+    char c{};
+    ss >> c;
+    if (ss.fail())
+        throw std::logic_error(ERROR_VALID_INTEGER);
+    else if (c != desired)
+        throw std::logic_error(ERROR_ILLEGAL_CHAR);
+}
+
+Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}, milliseconds{0}
+{
+    int n_chars = str.size();
+
+    if (n_chars > 12 || n_chars < 8)
+    {
+        throw std::out_of_range(ERROR_ABNORMAL_TIMESTAMP);
+    }
+
     std::stringstream ss{str};
-    int temp{};
 
-    if (ss >> temp)
-    {
-        this->hour = temp;
-        std::cout << "hour: " << this->hour << std::endl;
-        ss.clear();
-        ss.ignore(1024, ':');
-    }
-    else
-    {
-        throw std::logic_error(ERROR_VALID_INTEGER);
-    }
+    this->hour = get_next_integer(ss, 2);
+    skip_char(ss, ASCII_COLON);
+    this->minute = get_next_integer(ss, 2);
+    skip_char(ss, ASCII_COLON);
+    this->second = get_next_integer(ss, 2);
 
-    if (ss >> temp)
+    if (n_chars > 8)
     {
-        this->minute = temp;
-        std::cout << "minute: " << this->minute << std::endl;
-        ss.clear();
-        ss.ignore(1024, ':');
-    }
-    else
-    {
-        throw std::logic_error(ERROR_VALID_INTEGER);
-    }
-
-    if (ss >> temp)
-    {
-        this->second = temp;
-        std::cout << "second: " << this->second << std::endl;
-        ss.clear();
-        ss.ignore(1024, ':');
-    }
-    else
-    {
-        throw std::logic_error(ERROR_VALID_INTEGER);
+        skip_char(ss, ASCII_DOT);
+        this->milliseconds = get_next_integer(ss, 3);
     }
 
     check_values();
-    std::cout << this->to_string() << std::endl;
 }
 
 bool Time::is_am() const
@@ -85,7 +98,9 @@ std::string Time::to_string(bool twelwe_hour) const
     std::stringstream ss{};
 
     bool is_am = this->is_am();
+
     int hour{this->hour};
+
     if (twelwe_hour)
     {
         hour = ((hour + 11) % 12) + 1;
@@ -100,16 +115,17 @@ std::string Time::to_string(bool twelwe_hour) const
        << std::setw(2)
        << this->second;
 
+    if (this->milliseconds != 0)
+    {
+        ss << '.' << this->milliseconds;
+    }
+
     if (twelwe_hour)
     {
         ss << (is_am ? "am" : "pm");
     }
-    ss << std::endl;
 
-    std::string s{};
-    getline(ss, s);
-
-    return s;
+    return ss.str();
 }
 
 bool operator<(const Time &a, const Time &b)
