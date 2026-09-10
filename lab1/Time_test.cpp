@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "Time.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -101,6 +102,10 @@ TEST_CASE("Time stamps")
     CHECK(c.to_string(true) == "12:30:10am");
     CHECK(d.to_string() == "12:30:10");
     CHECK(d.to_string(true) == "12:30:10pm");
+
+    Time e{12, 30, 10, 300};
+    CHECK(e.to_string() == "12:30:10.300");
+    CHECK(e.to_string(true) == "12:30:10.300pm");
 }
 
 TEST_CASE("Time stamp creation")
@@ -139,4 +144,55 @@ TEST_CASE("Edge cases")
     CHECK_THROWS_WITH(Time{"10.3:5:3"}, ERROR_ILLEGAL_CHAR);
     CHECK_THROWS_WITH(Time{"10:53.134:3"}, ERROR_ILLEGAL_CHAR);
     CHECK_THROWS_WITH(Time{"10:53:3.141529"}, ERROR_ABNORMAL_TIMESTAMP); // Ok, maybe not this one for the bonus points
+}
+
+TEST_CASE("Operators")
+{
+    SECTION("Increment")
+    {
+        // Check prefix and postfix increment
+        Time a{13, 37, 0, 400};
+        CHECK((++a).to_string() == "13:37:01.400");
+        CHECK((a++).to_string() == "13:37:01.400");
+
+        // Check minute passing
+        Time b{13, 37, 59};
+        CHECK((++b).to_string() == "13:38:00");
+
+        // Check hour passing
+        Time c{13, 59, 59};
+        CHECK((++c).to_string() == "14:00:00");
+
+        // Check day passing
+        Time d{23, 59, 59};
+        CHECK((++d).to_string() == "00:00:00");
+    }
+    SECTION("Decrement")
+    {
+        Time a{13, 37, 00};
+        Time b{5, 40, 20};
+
+        CHECK(a - b == 28600);
+        CHECK(b - a == -28600);
+        CHECK(a - a == 0);
+    }
+    SECTION("Comparisons")
+    {
+        Time a{13, 37, 0};
+        Time b{17, 38, 0};
+
+        CHECK(a < b);
+        CHECK((a > b) == false);
+        CHECK(a <= b);
+        CHECK((a >= b) == false);
+
+        CHECK(a == a);
+        CHECK(a != b);
+    }
+    SECTION("Streaming")
+    {
+        Time a{13, 37, 20, 123};
+        cout << &a << endl; // TODO: Känns fel typ
+        // FIXME: Blir fel hehehe
+    }
 }

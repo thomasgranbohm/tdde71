@@ -128,38 +128,72 @@ std::string Time::to_string(bool twelwe_hour) const
     return ss.str();
 }
 
-bool operator<(const Time &a, const Time &b)
+void Time::increment()
 {
-    return a.get_timestamp() < b.get_timestamp();
+    if (++second == 60)
+    {
+        second %= 60;
+        if (++minute == 60)
+        {
+            minute %= 60;
+            if (++hour == 24)
+            {
+                hour %= 24;
+            }
+        }
+    }
+}
+
+Time &Time::operator++()
+{
+    increment();
+    return *this;
+}
+
+Time Time::operator++(int)
+{
+    Time copy = *this;
+    increment();
+    return copy;
+}
+
+int Time::operator-(const Time &b) const
+{
+    return this->get_timestamp() - b.get_timestamp();
 };
 
-bool operator>(const Time &a, const Time &b)
+bool Time::operator<(const Time &b) const
 {
-    return a.get_timestamp() > b.get_timestamp();
+    return this->get_timestamp() < b.get_timestamp();
 };
 
-bool operator<=(const Time &a, const Time &b)
+bool Time::operator>(const Time &b) const
 {
-    return a.get_timestamp() <= b.get_timestamp();
+    return this->get_timestamp() > b.get_timestamp();
 };
 
-bool operator>=(const Time &a, const Time &b)
+bool Time::operator<=(const Time &b) const
 {
-    return a.get_timestamp() >= b.get_timestamp();
+    return this->get_timestamp() <= b.get_timestamp();
 };
 
-bool operator==(const Time &a, const Time &b)
+bool Time::operator>=(const Time &b) const
 {
-    return a.get_timestamp() == b.get_timestamp();
+    return this->get_timestamp() >= b.get_timestamp();
 };
 
-bool operator!=(const Time &a, const Time &b)
+bool Time::operator==(const Time &b) const
 {
-    return a.get_timestamp() != b.get_timestamp();
+    return this->get_timestamp() == b.get_timestamp();
 };
 
-std::ostream &operator<<(std::ostream &os, const Time &time)
+bool Time::operator!=(const Time &b) const
 {
-    os << time.to_string();
+    return this->get_timestamp() != b.get_timestamp();
+};
+
+std::ostream &Time::operator<<(std::ostream &os)
+{
+    os << this->to_string();
     return os;
 };

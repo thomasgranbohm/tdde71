@@ -1,6 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
 
+#include <iostream>
 #include <string>
 
 #define ERROR_HOUR_RANGE "Hours outside range."
@@ -22,6 +23,8 @@ private:
     int hour, minute, second, milliseconds;
     void check_values();
 
+    void increment();
+
 public:
     Time(int _hour = 0, int _minute = 0, int _second = 0, int _milliseconds = 0);
     Time(const std::string &s);
@@ -34,7 +37,18 @@ public:
     inline int get_minute() const { return minute; }
     inline int get_second() const { return second; }
     inline int get_millisecond() const { return milliseconds; }
-
     inline int get_timestamp() const { return hour * 60 * 60 + minute * 60 + second; }
+
+    Time &operator++();   // Prefix
+    Time operator++(int); // Postfix
+
+    int operator-(const Time &b) const;
+    bool operator<(const Time &b) const;
+    bool operator>(const Time &b) const;
+    bool operator<=(const Time &b) const;
+    bool operator>=(const Time &b) const;
+    bool operator==(const Time &b) const;
+    bool operator!=(const Time &b) const;
+    std::ostream &operator<<(std::ostream &os);
 };
 #endif
