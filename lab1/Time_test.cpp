@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include "Time.hpp"
-#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -20,9 +20,13 @@ TEST_CASE("Constructors and getters")
         Time t1{12, 30, 30};
         Time t2{23, 59, 59};
 
+        // Out of bounds:
         CHECK_THROWS(Time{13, 35, 60});
         CHECK_THROWS(Time{13, 60, 35});
         CHECK_THROWS(Time{24, 35, 35});
+        CHECK_THROWS( Time{-1,35,35} );
+        CHECK_THROWS( Time{13,-1,35} );
+        CHECK_THROWS( Time{13,35,-1} );
 
         CHECK(t0.get_hour() == 0);
         CHECK(t0.get_minute() == 0);
@@ -35,15 +39,59 @@ TEST_CASE("Constructors and getters")
         CHECK(t2.get_second() == 59);
     }
 
+    SECTION("Integer + Millisecond")
+    {
+        Time t0{0, 0, 0, 0};
+        Time t1{12, 30, 30, 222};
+        Time t2{23, 59, 59, 999};
+
+        // Out of bounds:
+        CHECK_THROWS(Time{13, 35, 60, 100});
+        CHECK_THROWS(Time{13, 60, 35, 100});
+        CHECK_THROWS(Time{24, 35, 35, 100});
+        CHECK_THROWS(Time{13, 35, 35, 1000});
+        CHECK_THROWS(Time{13, 35, 35, 1000});
+        CHECK_THROWS(Time{13, 35, 35, 1000});
+        CHECK_THROWS(Time{-1, 35, 35, 100});
+        CHECK_THROWS(Time{35, -1, 35, 100});
+        CHECK_THROWS(Time{35, 35, -1, 100});
+        CHECK_THROWS(Time{35, 35, 35, -1});
+
+        CHECK(t0.get_hour() == 0);
+        CHECK(t0.get_minute() == 0);
+        CHECK(t0.get_second() == 0);
+        CHECK(t0.get_millisecond() == 0);
+        CHECK(t1.get_hour() == 12);
+        CHECK(t1.get_minute() == 30);
+        CHECK(t1.get_second() == 30);
+        CHECK(t1.get_millisecond() == 222);
+        CHECK(t2.get_hour() == 23);
+        CHECK(t2.get_minute() == 59);
+        CHECK(t2.get_second() == 59);
+        CHECK(t2.get_millisecond() == 999);
+    }
+
     SECTION("String")
     {
         Time t0{"00:00:00"};
         Time t1{"12:30:30"};
         Time t2{"23:59:59"};
 
+        // Out of bounds:
         CHECK_THROWS(Time{"13:35:60"});
         CHECK_THROWS(Time{"13:60:35"});
         CHECK_THROWS(Time{"24:35:35"});
+        CHECK_THROWS(Time{"-13:35:35"});
+        CHECK_THROWS(Time{"13:-35:35"});
+        CHECK_THROWS(Time{"13:35:-35"});
+
+        // Wrong format:
+        CHECK_THROWS(Time{"123::456"});
+        CHECK_THROWS(Time{"12:34"});
+        CHECK_THROWS(Time{"12.34.56"});
+        CHECK_THROWS(Time("12:34:56.789.10"));
+        CHECK_THROWS(Time("12:34:56.789:10"));
+        CHECK_THROWS(Time("12:34:56.7.89"));
 
         CHECK(t0.get_hour() == 0);
         CHECK(t0.get_minute() == 0);
@@ -54,6 +102,47 @@ TEST_CASE("Constructors and getters")
         CHECK(t2.get_hour() == 23);
         CHECK(t2.get_minute() == 59);
         CHECK(t2.get_second() == 59);
+    }
+    SECTION("String + Millisecond")
+    {
+        Time t0{"00:00:00.000"};
+        Time t1{"12:30:30.222"};
+        Time t2{"23:59:59.999"};
+
+        // Out of bounds:
+        CHECK_THROWS(Time{"13:35:60.100"});
+        CHECK_THROWS(Time{"13:60:35.100"});
+        CHECK_THROWS(Time{"24:35:35.100"});
+        CHECK_THROWS(Time{"13:35:35.1000"});
+        CHECK_THROWS(Time{"13:35:35.1000"});
+        CHECK_THROWS(Time{"13:35:35.1000"});
+        CHECK_THROWS(Time{"-13:35:35.100"});
+        CHECK_THROWS(Time{"13:-35:35.100"});
+        CHECK_THROWS(Time{"13:35:-35.100"});
+        CHECK_THROWS(Time{"13:35:35.-100"});
+
+        // Wrong format:
+        CHECK_THROWS(Time{"123::456.100"});
+        CHECK_THROWS(Time{"12:34:56:100"});
+        CHECK_THROWS(Time{"12.34.56.100"});
+        CHECK_THROWS(Time{"12.34.56:100"});
+        CHECK_THROWS(Time{"12:3456.100"});
+        CHECK_THROWS(Time{"12.34.56.10"});
+        CHECK_THROWS(Time{"12.34.5:100"});
+        CHECK_THROWS(Time{"12:3456.100"});
+
+        CHECK(t0.get_hour() == 0);
+        CHECK(t0.get_minute() == 0);
+        CHECK(t0.get_second() == 0);
+        CHECK(t0.get_millisecond() == 0);
+        CHECK(t1.get_hour() == 12);
+        CHECK(t1.get_minute() == 30);
+        CHECK(t1.get_second() == 30);
+        CHECK(t1.get_millisecond() == 222);
+        CHECK(t2.get_hour() == 23);
+        CHECK(t2.get_minute() == 59);
+        CHECK(t2.get_second() == 59);
+        CHECK(t2.get_millisecond() == 999);
     }
 }
 
@@ -72,44 +161,48 @@ TEST_CASE("to_string")
     Time t2{12, 0, 0};
     Time t3{13, 0, 0};
     Time t4{23, 59, 59};
+    Time t5{12, 34, 56, 78};
+    Time t6{12, 34, 56, 0};
+    Time t7{"12:34:56.078"};
+    Time t8{"12:34:56.000"};
     SECTION("24 hour format no argument")
     {
         CHECK(t0.to_string() == "00:00:00");
+        CHECK(t1.to_string() == "11:59:59");
+        CHECK(t2.to_string() == "12:00:00");
+        CHECK(t3.to_string() == "13:00:00");
+        CHECK(t4.to_string() == "23:59:59");
+        CHECK(t5.to_string() == "12:34:56.078");
+        CHECK(t6.to_string() == "12:34:56");
+        CHECK(t7.to_string() == "12:34:56.078");
+        CHECK(t8.to_string() == "12:34:56");
     }
 
-    // SECTION("24 hour format with argument")
-    // {
-    // }
+    SECTION("24 hour format with argument")
+    {
+        CHECK(t0.to_string(false) == "00:00:00");
+        CHECK(t1.to_string(false) == "11:59:59");
+        CHECK(t2.to_string(false) == "12:00:00");
+        CHECK(t3.to_string(false) == "13:00:00");
+        CHECK(t4.to_string(false) == "23:59:59");
+        CHECK(t5.to_string(false) == "12:34:56.078");
+        CHECK(t6.to_string(false) == "12:34:56");
+        CHECK(t7.to_string(false) == "12:34:56.078");
+        CHECK(t8.to_string(false) == "12:34:56");
+    }
 
-    // SECTION("12 hour format")
-    // {
-    // }
-}
-
-TEST_CASE("Time stamps")
-{
-
-    Time a{4, 50, 20};
-    Time b{15, 50, 20};
-    Time c{0, 30, 10};
-    Time d{12, 30, 10};
-
-    CHECK(a.to_string() == "04:50:20");
-    CHECK(a.to_string(true) == "04:50:20am");
-    CHECK(b.to_string() == "15:50:20");
-    CHECK(b.to_string(true) == "03:50:20pm");
-    CHECK(c.to_string() == "00:30:10");
-    CHECK(c.to_string(true) == "12:30:10am");
-    CHECK(d.to_string() == "12:30:10");
-    CHECK(d.to_string(true) == "12:30:10pm");
-
-    Time e{12, 30, 10, 300};
-    CHECK(e.to_string() == "12:30:10.300");
-    CHECK(e.to_string(true) == "12:30:10.300pm");
-
-    Time f{"12:30:10.300"};
-    CHECK(f.to_string() == "12:30:10.300");
-    CHECK(f.to_string(true) == "12:30:10.300pm");
+    SECTION("12 hour format")
+    {
+        CHECK(t0.to_string(true) == "12:00:00am");
+        CHECK(t1.to_string(true) == "11:59:59am");
+        CHECK(t2.to_string(true) == "12:00:00pm");
+        CHECK(t3.to_string(true) == "01:00:00pm");
+        CHECK(t4.to_string(true) == "11:59:59pm");
+        CHECK(t5.to_string(true) == "12:34:56.078pm");
+        CHECK(t6.to_string(true) == "12:34:56pm");
+        CHECK(t7.to_string(true) == "12:34:56.078pm");
+        CHECK(t8.to_string(true) == "12:34:56pm");
+    }
 }
 
 TEST_CASE("Time stamp creation")
@@ -158,6 +251,7 @@ TEST_CASE("Operators")
         Time a{13, 37, 0, 400};
         CHECK((++a).to_string() == "13:37:01.400");
         CHECK((a++).to_string() == "13:37:01.400");
+        CHECK(a.to_string() == "13:37:02.400");
 
         // Check minute passing
         Time b{13, 37, 59};
@@ -186,17 +280,33 @@ TEST_CASE("Operators")
         Time b{17, 38, 0};
 
         CHECK(a < b);
-        CHECK((a > b) == false);
+        CHECK_FALSE(a > b);
         CHECK(a <= b);
-        CHECK((a >= b) == false);
+        CHECK_FALSE(a >= b);
 
         CHECK(a == a);
         CHECK(a != b);
     }
     SECTION("Streaming")
     {
-        Time a{13, 37, 20, 123};
-        cout << a << endl; // TODO: Känns fel typ
-        // FIXME: Blir fel hehehe
+        Time t0{};
+        Time t1{1, 2, 3};
+        Time t2{1, 2, 3, 4};
+        ostringstream oss{};
+        SECTION("Test 1")
+        {
+            oss << t0;
+            CHECK(oss.str() == t0.to_string());
+        }
+        SECTION("Test 2")
+        {
+            oss << t1;
+            CHECK(oss.str() == t1.to_string());
+        }
+        SECTION("Test 3")
+        {
+            oss << t2;
+            CHECK(oss.str() == t2.to_string());
+        }
     }
 }
