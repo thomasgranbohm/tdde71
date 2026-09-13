@@ -1,10 +1,8 @@
 #include "Time.hpp"
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <stdexcept>
-#include <vector>
 
 // Checks if time values are out of bounds/range
 void Time::check_values()
