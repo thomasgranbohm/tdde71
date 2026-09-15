@@ -18,7 +18,7 @@ class LinkedList
 
 public:
     LinkedList() : size{0}, head{nullptr}, tail{nullptr} {}; // ctor
-    LinkedList(LinkedList &other);                           // copy ctor
+    LinkedList(const LinkedList &other);                     // copy ctor
     ~LinkedList() { empty_list(); }                          // dtor
 
     void push_front(const int a);
@@ -31,7 +31,7 @@ public:
 
     int front() const { return head->value; }
     int back() const { return tail->value; }
-    int get(const int n) const;
+    int get(const unsigned int n) const;
 
     std::string to_string() const;
 

@@ -4,19 +4,20 @@
 #include "LinkedList.hpp"
 
 // Copy constructor
-LinkedList::LinkedList(LinkedList &other)
+LinkedList::LinkedList(const LinkedList &other)
 {
     size = other.size;
     head = other.head;
     tail = other.tail;
 }
 
-void LinkedList::push_front(int a)
+void LinkedList::push_front(const int a)
 {
-    Node *old = head;
+    Node *old = head; // Store old head
 
-    head = new Node{a, nullptr, old};
+    head = new Node{a, nullptr, old}; // Create new head node
 
+    // If list is empty, set new head as tail too
     if (is_empty())
     {
         tail = head;
@@ -29,18 +30,18 @@ void LinkedList::push_front(int a)
     size++;
 }
 
-void LinkedList::push_back(int a)
+void LinkedList::push_back(const int a)
 {
-    Node *old = tail;
+    Node *old = tail; // Store old tail
 
-    tail = new Node{a, old, nullptr};
+    tail = new Node{a, old, nullptr}; // Create new tail node
 
-    // If list is empty, set new node as new head
+    // If list is empty, set new tail as head too
     if (is_empty())
     {
         head = tail;
     }
-    else // If list isn't empty, point old head to new head
+    else // If list isn't empty, point old tail to new tail
     {
         old->next = tail;
     }
@@ -76,7 +77,8 @@ int LinkedList::pop_back()
     return value;
 }
 
-int LinkedList::get(const int n) const
+// Returns the value of the nth node
+int LinkedList::get(const unsigned int n) const
 {
     if (n > size)
     {
@@ -130,7 +132,7 @@ void LinkedList::empty_list()
 
     while (true)
     {
-        // Get pointer of next in line
+        // Get pointer of next node in line
         Node *n = curr->next; // curr-> is the same as (*curr)
 
         delete curr;      // delete the value at curr
