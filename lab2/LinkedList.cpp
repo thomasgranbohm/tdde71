@@ -13,28 +13,36 @@ LinkedList::LinkedList(LinkedList &other)
 
 void LinkedList::push_front(int a)
 {
-    Node *prev = head;
+    Node *old = head;
 
-    head = new Node{a, nullptr, prev};
+    head = new Node{a, nullptr, old};
 
-    prev->prev = head;
+    if (is_empty())
+    {
+        tail = head;
+    }
+    else // If list isn't empty, point prev head to new head
+    {
+        old->prev = head;
+    }
+
     size++;
 }
 
 void LinkedList::push_back(int a)
 {
-    Node *prev = tail;
+    Node *old = tail;
 
-    tail = new Node{a, prev, nullptr};
+    tail = new Node{a, old, nullptr};
 
-    if (head == nullptr)
+    // If list is empty, set new node as new head
+    if (is_empty())
     {
         head = tail;
     }
-
-    if (prev != nullptr)
+    else // If list isn't empty, point old head to new head
     {
-        prev->next = tail;
+        old->next = tail;
     }
 
     size++;
@@ -93,7 +101,7 @@ std::string LinkedList::to_string() const
 
     Node *curr = head;
 
-    while (true)
+    while (curr != nullptr)
     {
         ss << curr->value;
 
@@ -114,20 +122,24 @@ std::string LinkedList::to_string() const
 
 void LinkedList::empty_list()
 {
-    Node *curr = head;
+    // Pointer to head, ie adress of head
+    Node *curr = head; // curr is of pointer type
 
-    // TODO: jag vet faktiskt inte om det här gör någonting
-    // jag ändrade lite från tidigare implementationen
+    if (size == 0)
+        return;
+
     while (true)
     {
-        Node *n = curr->next;
+        // Get pointer of next in line
+        Node *n = curr->next; // curr-> is the same as (*curr)
 
-        delete curr;
-        if (n == nullptr)
+        delete curr;      // delete the value at curr
+        if (n == nullptr) // check if end of list and break
         {
             break;
         }
 
+        // otherwise, continue with n as curr
         curr = n;
     }
 }

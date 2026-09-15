@@ -21,8 +21,8 @@ public:
     LinkedList(LinkedList &other);                           // copy ctor
     ~LinkedList() { empty_list(); }                          // dtor
 
-    void push_front(int a);
-    void push_back(int a);
+    void push_front(const int a);
+    void push_back(const int a);
     int pop_front();
     int pop_back();
 

@@ -20,4 +20,11 @@ TEST_CASE("General")
     CHECK(l.front() == 21);
     CHECK(l.back() == 7);
     CHECK(l.to_string() == "[21, 42, 93, 7]");
+
+    SECTION("to_string")
+    {
+        LinkedList a{};
+
+        CHECK(a.to_string() == "[]");
+    }
 }
