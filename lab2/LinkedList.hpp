@@ -16,6 +16,9 @@ class LinkedList
     Node *head;
     Node *tail;
 
+    void empty_list();
+    LinkedList copy_list(const LinkedList &b);
+
 public:
     LinkedList() : size{0}, head{nullptr}, tail{nullptr} {}; // ctor
     LinkedList(const LinkedList &other);                     // copy ctor
@@ -35,7 +38,7 @@ public:
 
     std::string to_string() const;
 
-    void empty_list();
+    LinkedList &operator=(const LinkedList &b);
 };
 
 #endif

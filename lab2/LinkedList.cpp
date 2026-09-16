@@ -1,14 +1,38 @@
-#include <stdexcept>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 #include "LinkedList.hpp"
 
 // Copy constructor
-LinkedList::LinkedList(const LinkedList &other)
+LinkedList::LinkedList(const LinkedList &b) : size{0}, head{nullptr}, tail{nullptr}
+{ // This doesn't copy, it just creates a new LinkedList that points to the same values.
+    size = 0;
+
+    for (int i{0}; i < b.size; i++)
+    {
+        this->push_back(b.get(i));
+    }
+}
+
+LinkedList &LinkedList::operator=(const LinkedList &b)
 {
-    size = other.size;
-    head = other.head;
-    tail = other.tail;
+    if (this == &b)
+        return *this;
+
+    // Reset list
+    empty_list();
+
+    // Set default variables
+    size = 0;
+    head = nullptr;
+    tail = nullptr;
+
+    for (int i{0}; i < b.size; i++)
+    {
+        this->push_back(b.get(i));
+    }
+
+    return *this;
 }
 
 void LinkedList::push_front(const int a)
