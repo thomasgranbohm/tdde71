@@ -77,34 +77,56 @@ void delB()
 
 void delC()
 {
-    float f{};
     std::string s{};
+    float f{};
 
     cout << "===== Del C Inmatningsbuffer och tabellutskrift =====" << endl
          << "Skriv in en sträng och ett decimaltal fem gånger på samma rad:" << endl;
 
+    cin >> s; // makes cout wait until we get inputs (expecting a whole line)
+
+    cout << "Här är talen i tabellform:" << endl
+         << setw(30) << setfill('=') << '=' << endl;
+
     cout.precision(3);
+    cout.fill(3);
 
-    for (int i = 0; i < 5; i++)
-    {
-        cin >> s;
-        cin >> f;
+    cin >> f;
 
-        if (i == 0)
-        {
-            cout << "Här är talen i tabellform:" << endl
-                 << setw(30) << setfill('=') << '=' << endl;
-        }
+    cout << s
+         << std::setw(30 - s.size())
+         << std::fixed
+         << std::right
+         << f << endl;
 
-        cout
-            << std::left
-            << s
-            << std::setw(30 - s.size())
-            << std::setfill('_')
-            << std::fixed
-            << std::right
-            << f << endl;
-    }
+    cin >> s >> f;
+    cout << s
+         << std::setw(30 - s.size())
+         << std::fixed
+         << std::right
+         << f << endl;
+
+    cin >> s >> f;
+    cout << s
+         << std::setw(30 - s.size())
+         << std::fixed
+         << std::right
+         << f << endl;
+
+    cin >> s >> f;
+    cout << s
+         << std::setw(30 - s.size())
+         << std::fixed
+         << std::right
+         << f << endl;
+
+    cin >> s >> f;
+    cout << s
+         << std::setw(30 - s.size())
+         << std::fixed
+         << std::right
+         << f << endl;
+
     clearCin();
 }
 
@@ -138,20 +160,6 @@ void delE()
     cout << "Övriga namn: " << s << endl;
 }
 
-void delF()
-{
-    string s{};
-    int n{};
-    cout << "===== Del F Frivilligt =====" << endl
-         << "Skriv in ett ord: ";
-    cin >> s;
-    n = s.size() + 1;
-    clearCin();
-    cout << '+' << setw(n) << setfill('-') << '+' << endl;
-    cout << '|' << s << '|' << endl;
-    cout << '+' << setw(n) << setfill('-') << '+' << endl;
-}
-
 int main()
 {
     delA();
@@ -159,6 +167,5 @@ int main()
     delC();
     delD();
     delE();
-    delF();
     return 0;
 }
