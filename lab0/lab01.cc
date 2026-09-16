@@ -14,6 +14,9 @@ void clearCin()
 void delA()
 {
     int number{};
+    float floating{};
+    char c{};
+    std::string s{};
 
     cout << "===== Del A Formaterad I/O =====" << endl
          << "Skriv in ett heltal: " << flush;
@@ -23,7 +26,6 @@ void delA()
     cout << "Du skrev in talet: " << number << endl
          << "Skriv in ett heltal och ett flyttal: " << flush;
 
-    float floating{};
     cin >> number;
     cin >> floating;
     clearCin();
@@ -39,14 +41,12 @@ void delA()
         << "Du skrev in flyttalet: " << floating << endl
         << "Skriv in ett tecken: " << flush;
 
-    char c{};
     cin >> c;
     clearCin();
     cout
         << "Du skrev in tecknet: " << c << endl
         << "Skriv in ett ord: " << flush;
 
-    std::string s{};
     cin >> s;
     clearCin();
     cout
@@ -55,11 +55,12 @@ void delA()
 
 void delB()
 {
-    cout << "===== Del B Escapesekvenser =====\n"
-         << "Skriv in ett heltal och ett ord: " << flush;
-
     int number{};
     std::string s{};
+    char c{};
+
+    cout << "===== Del B Escapesekvenser =====\n"
+         << "Skriv in ett heltal och ett ord: " << flush;
 
     cin >> number >> s;
     clearCin();
@@ -68,7 +69,6 @@ void delB()
         << "Du skrev in talet |" << number << "| och ordet |" << s << "|.\n"
         << "Skriv in ett tecken och ett ord: " << flush;
 
-    char c{};
     cin >> c >> s;
     clearCin();
 
@@ -110,9 +110,9 @@ void delC()
 
 void delD()
 {
+    std::string s{};
     cout << "===== Del D Oformaterad I/O =====" << endl
          << "Skriv in en rad text: " << flush;
-    std::string s{};
     getline(cin, s);
     cout << endl
          << "Du skrev in: \"" << s << "\"" << endl
@@ -124,13 +124,13 @@ void delD()
 
 void delE()
 {
+    string s{};
+    stringstream ss(s);
     cout << "===== Del E Sträng som datakälla (istf cin) =====" << endl
          << "Skriv in LiU-ID och fulständigt namn på samma rad:" << endl;
-    string s{};
     getline(cin, s);
     cout << "Du skrev in: \"" << s << "\"" << endl;
 
-    stringstream ss(s);
     ss >> s;
     ss >> s;
     cout << "Förnamn: " << s << endl;
@@ -140,12 +140,13 @@ void delE()
 
 void delF()
 {
+    string s{};
+    int n{};
     cout << "===== Del F Frivilligt =====" << endl
          << "Skriv in ett ord: ";
-    string s{};
     cin >> s;
+    n = s.size() + 1;
     clearCin();
-    int n = s.size() + 1;
     cout << '+' << setw(n) << setfill('-') << '+' << endl;
     cout << '|' << s << '|' << endl;
     cout << '+' << setw(n) << setfill('-') << '+' << endl;
