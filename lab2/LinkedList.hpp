@@ -12,7 +12,7 @@ struct Node
 
 class LinkedList
 {
-    int size;
+    unsigned int size;
     Node *head;
     Node *tail;
 
@@ -22,12 +22,16 @@ class LinkedList
 public:
     LinkedList() : size{0}, head{nullptr}, tail{nullptr} {}; // ctor
     LinkedList(const LinkedList &other);                     // copy ctor
+    LinkedList &operator=(const LinkedList &b);              // copy assignment
+    LinkedList(LinkedList &&other);                          // move ctor
+    LinkedList &operator=(LinkedList &&other);               // move assignment
     ~LinkedList() { empty_list(); }                          // dtor
 
     void push_front(const int a);
     void push_back(const int a);
     int pop_front();
     int pop_back();
+    void bubble_sort();
 
     inline bool is_empty() const { return size == 0; }
     int get_size() const { return size; }
@@ -37,8 +41,6 @@ public:
     int get(const unsigned int n) const;
 
     std::string to_string() const;
-
-    LinkedList &operator=(const LinkedList &b);
 };
 
 #endif

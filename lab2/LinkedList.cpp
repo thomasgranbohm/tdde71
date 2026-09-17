@@ -5,10 +5,8 @@
 
 // Copy constructor
 LinkedList::LinkedList(const LinkedList &b) : size{0}, head{nullptr}, tail{nullptr}
-{ // This doesn't copy, it just creates a new LinkedList that points to the same values.
-    size = 0;
-
-    for (int i{0}; i < b.size; i++)
+{
+    for (unsigned int i{0}; i < b.size; i++)
     {
         this->push_back(b.get(i));
     }
@@ -22,15 +20,43 @@ LinkedList &LinkedList::operator=(const LinkedList &b)
     // Reset list
     empty_list();
 
-    // Set default variables
-    size = 0;
-    head = nullptr;
-    tail = nullptr;
-
-    for (int i{0}; i < b.size; i++)
+    for (unsigned int i{0}; i < b.size; i++)
     {
         this->push_back(b.get(i));
     }
+
+    return *this;
+}
+
+LinkedList::LinkedList(LinkedList &&other) : size{0}, head{nullptr}, tail{nullptr}
+{
+    head = other.head;
+    tail = other.tail;
+    size = other.size;
+    other.head = nullptr;
+    other.tail = nullptr;
+    other.size = 0;
+}
+
+LinkedList &LinkedList::operator=(LinkedList &&other)
+{
+    if (this == &other)
+    {
+        return *this;
+    }
+    Node *t_head = other.head;
+    Node *t_tail = other.tail;
+    unsigned int t_size = other.size;
+
+    other.head = this->head;
+    other.tail = this->tail;
+    other.size = this->size;
+
+    other.empty_list();
+
+    this->head = t_head;
+    this->tail = t_tail;
+    this->size = t_size;
 
     return *this;
 }
@@ -111,7 +137,7 @@ int LinkedList::get(const unsigned int n) const
 
     Node curr = *head;
 
-    for (int i{0}; i < n; i++)
+    for (unsigned int i{0}; i < n; i++)
     {
         curr = *curr.next;
     }
@@ -148,11 +174,11 @@ std::string LinkedList::to_string() const
 
 void LinkedList::empty_list()
 {
+    if (is_empty())
+        return;
+
     // Pointer to head, ie adress of head
     Node *curr = head; // curr is of pointer type
-
-    if (size == 0)
-        return;
 
     while (true)
     {
@@ -168,4 +194,64 @@ void LinkedList::empty_list()
         // otherwise, continue with n as curr
         curr = n;
     }
+
+    size = 0;
+    head = nullptr;
+    tail = nullptr;
+}
+
+void swap_nodes(Node *node1, Node *node2)
+{ // Kan vara fel
+    node1->next = node2->next;
+    node2->prev = node1->prev;
+
+    if (node1->prev != nullptr)
+    {
+        node1->prev->next = node2;
+    }
+    if (node2->next != nullptr)
+    {
+        node2->next->prev = node1;
+    }
+
+    node1->prev = node2;
+    node2->next = node1;
+}
+
+void LinkedList::bubble_sort()
+{
+    if (is_empty())
+        return;
+
+    bool has_swapped = false;
+
+    do
+    {
+        has_swapped = false;
+        Node *current = head;
+        Node *next = current->next;
+        while (next != nullptr)
+        {
+            if (current->value > next->value)
+            {
+                if (current == head)
+                {
+                    head = next;
+                }
+                else if (next == tail)
+                {
+                    tail = current;
+                }
+
+                swap_nodes(current, next);
+
+                has_swapped = true;
+            }
+            else
+            {
+                current = next;
+            }
+            next = current->next;
+        }
+    } while (has_swapped);
 }

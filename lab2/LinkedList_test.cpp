@@ -77,4 +77,79 @@ TEST_CASE("General")
         CHECK(b.to_string() == "[1, 2, 3, 4, 5]");
         CHECK(c.to_string() == "[1, 2, 3, 4, 5]");
     }
+    SECTION("Move ctor")
+    {
+        LinkedList a{};
+
+        a.push_back(1);
+        a.push_back(2);
+        a.push_back(3);
+
+        LinkedList b{std::move(a)}; // Move ctor
+        CHECK(a.is_empty());
+        CHECK(b.get(0) == 1);
+        CHECK(b.get(1) == 2);
+        CHECK(b.get(2) == 3);
+    }
+    SECTION("Move assignment")
+    {
+        LinkedList a{};
+        LinkedList b{};
+        b.push_back(3);
+
+        a.push_back(1);
+        a.push_back(2);
+        a.push_back(3);
+
+        b = std::move(a); // Move assignment
+        CHECK(a.is_empty());
+        CHECK(b.get(0) == 1);
+        CHECK(b.get(1) == 2);
+        CHECK(b.get(2) == 3);
+
+        LinkedList c{};
+        LinkedList d{};
+
+        c.push_back(1);
+        c.push_back(2);
+        c.push_back(3);
+
+        d = std::move(c); // Move assignment
+        CHECK(c.is_empty());
+        CHECK(d.get(0) == 1);
+        CHECK(d.get(1) == 2);
+        CHECK(d.get(2) == 3);
+    }
+
+    SECTION("Sorting")
+    {
+        LinkedList a{};
+
+        a.push_back(7);
+        a.push_back(12);
+        a.push_back(15);
+        a.push_back(20);
+        a.push_back(8);
+        a.push_back(19);
+        a.push_back(16);
+        a.push_back(5);
+        a.push_back(13);
+        a.push_back(3);
+
+        a.bubble_sort();
+        CHECK(a.to_string() == "[3, 5, 7, 8, 12, 13, 15, 16, 19, 20]");
+
+        LinkedList b{};
+        b.bubble_sort();
+
+        LinkedList c{};
+        c.push_back(14);
+        c.push_back(5);
+        c.push_back(9);
+        c.push_back(14);
+        c.push_back(6);
+        c.push_back(19);
+        c.bubble_sort();
+        CHECK(c.to_string() == "[5, 6, 9, 14, 14, 19]");
+    }
 }
