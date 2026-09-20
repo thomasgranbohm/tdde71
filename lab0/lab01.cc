@@ -83,7 +83,7 @@ void delC()
     cout << "===== Del C Inmatningsbuffer och tabellutskrift =====" << endl
          << "Skriv in en sträng och ett decimaltal fem gånger på samma rad:" << endl;
 
-    cin >> s; // makes cout wait until we get inputs (expecting a whole line)
+    cin >> s >> f; // makes cout wait until we get inputs (expecting a whole line)
 
     cout << "Här är talen i tabellform:" << endl
          << setw(30) << setfill('=') << '=' << endl;
@@ -91,8 +91,6 @@ void delC()
     cout.precision(3);
     cout.fill(3);
 
-    cin >> f;
-
     cout << s
          << std::setw(30 - s.size())
          << std::fixed
@@ -102,28 +100,24 @@ void delC()
     cin >> s >> f;
     cout << s
          << std::setw(30 - s.size())
-         << std::fixed
          << std::right
          << f << endl;
 
     cin >> s >> f;
     cout << s
          << std::setw(30 - s.size())
-         << std::fixed
          << std::right
          << f << endl;
 
     cin >> s >> f;
     cout << s
          << std::setw(30 - s.size())
-         << std::fixed
          << std::right
          << f << endl;
 
     cin >> s >> f;
     cout << s
          << std::setw(30 - s.size())
-         << std::fixed
          << std::right
          << f << endl;
 

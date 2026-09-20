@@ -26,7 +26,6 @@ std::string to_string(Runner const &runner)
        << std::setfill('0')
        << runner.hours
        << ':'
-       << std::right
        << std::setw(2)
        << runner.minutes
        << ':'
