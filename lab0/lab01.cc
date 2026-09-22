@@ -29,8 +29,9 @@ void delA()
     cin >> number;
     cin >> floating;
     clearCin();
+    cout.precision(5);
     cout << "Du skrev in heltalet: " << number << endl
-         << "Du skrev in flyttalet: " << floating << endl
+         << "Du skrev in flyttalet: " << fixed << floating << endl
          << "Skriv in ett flyttal och ett heltal: " << flush;
 
     cin >> floating;
@@ -59,7 +60,7 @@ void delB()
     string s{};
     char c{};
 
-    cout << "===== Del B Escapesekvenser =====\n"
+    cout << "\n===== Del B Escapesekvenser =====\n"
          << "Skriv in ett heltal och ett ord: " << flush;
 
     cin >> number >> s;
@@ -80,7 +81,7 @@ void delC()
     string s{};
     float f{};
 
-    cout << "===== Del C Inmatningsbuffer och tabellutskrift =====" << endl
+    cout << "\n===== Del C Inmatningsbuffer och tabellutskrift =====" << endl
          << "Skriv in en sträng och ett decimaltal fem gånger på samma rad:" << endl;
 
     cin >> s >> f; // makes cout wait until we get inputs (expecting a whole line)
@@ -89,7 +90,6 @@ void delC()
          << setw(30) << setfill('=') << '=' << endl;
 
     cout.precision(3);
-    cout.fill(3);
 
     cout << s
          << fixed
@@ -124,7 +124,7 @@ void delC()
 void delD()
 {
     string s{};
-    cout << "===== Del D Oformaterad I/O =====" << endl
+    cout << "\n===== Del D Oformaterad I/O =====" << endl
          << "Skriv in en rad text: " << flush;
     getline(cin, s);
     cout << "Du skrev in: \"" << s << "\"" << endl
@@ -136,13 +136,14 @@ void delD()
 void delE()
 {
     string s{};
-    stringstream ss(s);
-    cout << "===== Del E Sträng som datakälla (istf cin) =====" << endl
+    stringstream ss{};
+    cout << "\n===== Del E Sträng som datakälla (istf cin) =====" << endl
          << "Skriv in LiU-ID och fulständigt namn på samma rad:" << endl;
     getline(cin, s);
     cout << "Du skrev in: \"" << s << "\"" << endl;
-
-    ss >> s >> s; // FIXME: funkar ej
+    
+    ss << s;
+    ss >> s >> s;
     cout << "Förnamn: " << s << endl;
     getline(ss >> ws, s);
     cout << "Övriga namn: " << s << endl;
