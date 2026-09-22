@@ -20,9 +20,13 @@ TEST_CASE("Constructors and getters")
         Time t1{12, 30, 30};
         Time t2{23, 59, 59};
 
+        // Out of bounds:
         CHECK_THROWS(Time{13, 35, 60});
         CHECK_THROWS(Time{13, 60, 35});
         CHECK_THROWS(Time{24, 35, 35});
+        CHECK_THROWS(Time{-1, 35, 35});
+        CHECK_THROWS(Time{13, -1, 35});
+        CHECK_THROWS(Time{13, 35, -1});
 
         CHECK(t0.get_hour() == 0);
         CHECK(t0.get_minute() == 0);
@@ -37,13 +41,41 @@ TEST_CASE("Constructors and getters")
 
     SECTION("String")
     {
+
         Time t0{"00:00:00"};
         Time t1{"12:30:30"};
         Time t2{"23:59:59"};
 
+        // Out of bounds:
         CHECK_THROWS(Time{"13:35:60"});
         CHECK_THROWS(Time{"13:60:35"});
         CHECK_THROWS(Time{"24:35:35"});
+        CHECK_THROWS(Time{"-1:35:35"});
+        CHECK_THROWS(Time{"13:-3:35"});
+        CHECK_THROWS(Time{"13:35:-3"});
+
+        // Wrong format:
+        CHECK_THROWS(Time{"12:34:56:"});
+        CHECK_THROWS(Time{":34:56"});
+        CHECK_THROWS(Time{"1:34:56"});
+        CHECK_THROWS(Time{"12:3:56"});
+        CHECK_THROWS(Time{"12:34:5"});
+        CHECK_THROWS(Time{"12::56"});
+        CHECK_THROWS(Time{"123::456"});
+        CHECK_THROWS(Time{"12:34:"});
+        CHECK_THROWS(Time{"a12:bb:35"});
+        CHECK_THROWS(Time{"12:334:56"});
+        CHECK_THROWS(Time{"12:34:566"});
+        CHECK_THROWS(Time{"1:34:566"});
+        CHECK_THROWS(Time{"ab:cd:ef"});
+        CHECK_THROWS(Time{"1"});
+        CHECK_THROWS(Time{"12:34"});
+        CHECK_THROWS(Time{"12.34.56"});
+        CHECK_THROWS(Time("12:34:56.789.10"));
+        CHECK_THROWS(Time("12:34:56.789:10"));
+        CHECK_THROWS(Time("12:34:56.7.89"));
+        CHECK_THROWS(Time{"ab:cd:ef"});
+        CHECK_THROWS(Time{"123456"});
 
         CHECK(t0.get_hour() == 0);
         CHECK(t0.get_minute() == 0);
@@ -107,5 +139,69 @@ TEST_CASE("to_string")
 
 TEST_CASE("operators")
 {
-    SECTION("") {} // FIXME: Har ej gjort nåt här än
+    SECTION("Increment")
+    {
+        // Check prefix and postfix increment
+        Time a{13, 37, 0};
+        CHECK((++a).to_string() == "13:37:01");
+        CHECK((a++).to_string() == "13:37:01");
+        CHECK(a.to_string() == "13:37:02");
+
+        // Check minute passing
+        Time b{13, 37, 59};
+        CHECK((++b).to_string() == "13:38:00");
+
+        // Check hour passing
+        Time c{13, 59, 59};
+        CHECK((++c).to_string() == "14:00:00");
+
+        // Check day passing
+        Time d{23, 59, 59};
+        CHECK((++d).to_string() == "00:00:00");
+    }
+    SECTION("Comparisons")
+    {
+        Time a{13, 37, 0};
+        Time b{14, 40, 1};
+
+        CHECK(a < b);
+        CHECK_FALSE(a < a);
+        CHECK_FALSE(b < a);
+
+        CHECK_FALSE(a > b);
+        CHECK_FALSE(a > a);
+        CHECK(b > a);
+
+        CHECK(a <= b);
+        CHECK(a <= a);
+        CHECK_FALSE(b <= a);
+
+        CHECK_FALSE(a >= b);
+        CHECK(a >= a);
+        CHECK(b >= a);
+
+        CHECK(a == a);
+        CHECK_FALSE(a == b);
+        CHECK_FALSE(b == a);
+        
+        CHECK_FALSE(a != a);
+        CHECK(a != b);
+        CHECK(b != a);
+    }
+    SECTION("Streaming")
+    {
+        Time t0{};
+        Time t1{1, 2, 3};
+        ostringstream oss{};
+        SECTION("Test 1")
+        {
+            oss << t0;
+            CHECK(oss.str() == t0.to_string());
+        }
+        SECTION("Test 2")
+        {
+            oss << t1;
+            CHECK(oss.str() == t1.to_string());
+        }
+    }
 }

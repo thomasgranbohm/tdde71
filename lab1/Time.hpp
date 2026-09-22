@@ -27,19 +27,19 @@ public:
     int get_minute() const { return minute; }
     int get_second() const { return second; }
     int get_millisecond() const { return milliseconds; }
-    int get_timestamp() const { return hour * 60 * 60 + minute * 60 + second; }
-    
+    double get_timestamp() const { return hour * 60 * 60 + minute * 60 + second + milliseconds / 1000.0; } // Single precision ('float') cannot store the decimal part (milliseconds) accurately enough when (hour * 60 * 60 + minute * 60 + second) is large
+
     Time &operator++();   // Prefix
     Time operator++(int); // Postfix
     
-    float operator-(const Time &b) const;
+    double operator-(const Time &b) const;
     bool operator<(const Time &b) const;
     bool operator>(const Time &b) const;
     bool operator<=(const Time &b) const;
     bool operator>=(const Time &b) const;
     bool operator==(const Time &b) const;
     bool operator!=(const Time &b) const;
-
+    
 private:
     int hour, minute, second, milliseconds;
     void check_values() const;

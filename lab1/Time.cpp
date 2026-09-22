@@ -169,12 +169,9 @@ Time Time::operator++(int)
     return copy;
 }
 
-float Time::operator-(const Time &b) const
+double Time::operator-(const Time &b) const
 {
-    int ts_diff{get_timestamp() - b.get_timestamp()};
-    float ms_diff{(milliseconds - b.get_millisecond()) / 1000.0f};
-
-    return ts_diff + ms_diff;
+    return get_timestamp() - b.get_timestamp();
 };
 
 bool Time::operator<(const Time &b) const
