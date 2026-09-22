@@ -4,8 +4,13 @@
 #include <string>
 #include <stdexcept>
 
+#define ASCII_DOT 46
+#define ASCII_ZERO 48
+#define ASCII_NINE 57
+#define ASCII_COLON 58
+
 // Checks if time values are out of bounds/range
-void Time::check_values()
+void Time::check_values() const
 {
     if (hour < 0 || hour >= 24)
     {
@@ -36,7 +41,7 @@ int get_next_integer(std::istringstream &iss, int n)
     char c{};
     std::ostringstream cs{};
 
-    for (int i = 0; i < n; i++)
+    for (int i{0}; i < n; i++)
     {
         iss >> c;
 
@@ -94,11 +99,6 @@ Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}, milliseconds
     }
 
     check_values();
-}
-
-bool Time::is_am() const
-{
-    return hour < 12;
 }
 
 // Converts the time data to a string with one of the following formats:
@@ -171,8 +171,8 @@ Time Time::operator++(int)
 
 float Time::operator-(const Time &b) const
 {
-    int ts_diff = get_timestamp() - b.get_timestamp();
-    float ms_diff = (milliseconds - b.get_millisecond()) / 1000;
+    int ts_diff{get_timestamp() - b.get_timestamp()};
+    float ms_diff{(milliseconds - b.get_millisecond()) / 1000.0f};
 
     return ts_diff + ms_diff;
 };
