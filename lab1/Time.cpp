@@ -1,13 +1,13 @@
 #include "Time.hpp"
 #include <iomanip>
 #include <sstream>
-#include <string>
 #include <stdexcept>
 
-#define ASCII_DOT 46
-#define ASCII_ZERO 48
-#define ASCII_NINE 57
-#define ASCII_COLON 58
+// Constants used in this file
+constexpr int ASCII_DOT   {46};
+constexpr int ASCII_ZERO  {48};
+constexpr int ASCII_NINE  {57};
+constexpr int ASCII_COLON {58};
 
 // Checks if time values are out of bounds/range
 void Time::check_values() const

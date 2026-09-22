@@ -4,13 +4,15 @@
 #include <iostream>
 #include <string>
 
-#define ERROR_HOUR_RANGE "Hours outside range."
-#define ERROR_MINUTE_RANGE "Minutes outside range."
-#define ERROR_SECOND_RANGE "Seconds outside range."
-#define ERROR_MILLISECOND_RANGE "Milliseconds outside range."
-#define ERROR_VALID_INTEGER "Input was not an integer."
-#define ERROR_ABNORMAL_TIMESTAMP "Abnormal timestamp."
-#define ERROR_ILLEGAL_CHAR "Illegal char."
+// Global constant error messages.
+// These are stored in the header to expose them to programmers.
+constexpr char ERROR_HOUR_RANGE[]         {"Hours outside range."};
+constexpr char ERROR_MINUTE_RANGE[]       {"Minutes outside range."};
+constexpr char ERROR_SECOND_RANGE[]       {"Seconds outside range."};
+constexpr char ERROR_MILLISECOND_RANGE[]  {"Milliseconds outside range."};
+constexpr char ERROR_VALID_INTEGER[]      {"Input was not an integer."};
+constexpr char ERROR_ABNORMAL_TIMESTAMP[] {"Abnormal timestamp."};
+constexpr char ERROR_ILLEGAL_CHAR[]       {"Illegal char."};
 
 struct Time
 {
