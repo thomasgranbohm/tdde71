@@ -16,7 +16,7 @@ void delA()
     int number{};
     float floating{};
     char c{};
-    std::string s{};
+    string s{};
 
     cout << "===== Del A Formaterad I/O =====" << endl
          << "Skriv in ett heltal: " << flush;
@@ -56,7 +56,7 @@ void delA()
 void delB()
 {
     int number{};
-    std::string s{};
+    string s{};
     char c{};
 
     cout << "===== Del B Escapesekvenser =====\n"
@@ -77,7 +77,7 @@ void delB()
 
 void delC()
 {
-    std::string s{};
+    string s{};
     float f{};
 
     cout << "===== Del C Inmatningsbuffer och tabellutskrift =====" << endl
@@ -92,33 +92,30 @@ void delC()
     cout.fill(3);
 
     cout << s
-         << std::setw(30 - s.size())
-         << std::fixed
-         << std::right
+         << fixed
+         << right
+         << setfill('_')
+         << setw(30 - s.size())
          << f << endl;
 
     cin >> s >> f;
     cout << s
-         << std::setw(30 - s.size())
-         << std::right
+         << setw(30 - s.size())
          << f << endl;
 
     cin >> s >> f;
     cout << s
-         << std::setw(30 - s.size())
-         << std::right
+         << setw(30 - s.size())
          << f << endl;
 
     cin >> s >> f;
     cout << s
-         << std::setw(30 - s.size())
-         << std::right
+         << setw(30 - s.size())
          << f << endl;
 
     cin >> s >> f;
     cout << s
-         << std::setw(30 - s.size())
-         << std::right
+         << setw(30 - s.size())
          << f << endl;
 
     clearCin();
@@ -126,16 +123,14 @@ void delC()
 
 void delD()
 {
-    std::string s{};
+    string s{};
     cout << "===== Del D Oformaterad I/O =====" << endl
          << "Skriv in en rad text: " << flush;
     getline(cin, s);
-    cout << endl
-         << "Du skrev in: \"" << s << "\"" << endl
+    cout << "Du skrev in: \"" << s << "\"" << endl
          << "Skriv in en till rad text: " << flush;
     getline(cin, s);
-    cout << endl
-         << "Du skrev in: \"" << s << "\"" << endl;
+    cout << "Du skrev in: \"" << s << "\"" << endl;
 }
 
 void delE()
@@ -147,8 +142,7 @@ void delE()
     getline(cin, s);
     cout << "Du skrev in: \"" << s << "\"" << endl;
 
-    ss >> s;
-    ss >> s;
+    ss >> s >> s; // FIXME: funkar ej
     cout << "Förnamn: " << s << endl;
     getline(ss >> ws, s);
     cout << "Övriga namn: " << s << endl;

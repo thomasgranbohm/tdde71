@@ -26,7 +26,8 @@ private:
     void increment();
 
 public:
-    Time(int _hour = 0, int _minute = 0, int _second = 0, int _milliseconds = 0);
+    Time() : hour{0}, minute{0}, second{0}, milliseconds{0} {};
+    Time(int _hour, int _minute, int _second, int _milliseconds = 0);
     Time(const std::string &s);
 
     bool is_am() const;
@@ -42,7 +43,7 @@ public:
     Time &operator++();   // Prefix
     Time operator++(int); // Postfix
 
-    int operator-(const Time &b) const;
+    float operator-(const Time &b) const;
     bool operator<(const Time &b) const;
     bool operator>(const Time &b) const;
     bool operator<=(const Time &b) const;

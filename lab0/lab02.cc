@@ -15,8 +15,8 @@ struct Runner
 
 std::string to_string(Runner const &runner)
 {
-    std::string s;
-    std::stringstream ss;
+    std::string s{};
+    std::stringstream ss{};
 
     // String building again
     ss << std::right
@@ -40,13 +40,20 @@ unsigned int get_total_seconds(Runner const &runner)
     return runner.hours * 60 * 60 + runner.minutes * 60 + runner.seconds;
 }
 
-void open_file(std::ifstream &input_file)
+void get_runners(std::vector<Runner> &runners)
 {
+    std::ifstream input_file{};
+    std::string filename{};
+
+    std::string name{};
+    unsigned int hours{};
+    unsigned int minutes{};
+    unsigned int seconds{};
+
     do
     {
         // Get filename
         std::cout << "Ange filnamn: ";
-        std::string filename;
         std::cin >> filename;
 
         // Open file
@@ -58,16 +65,21 @@ void open_file(std::ifstream &input_file)
             std::cout << "FEL: Filen gick inte att öppna!" << std::endl;
         }
     } while (!input_file.is_open());
+
+    while (input_file >> name >> hours >> minutes >> seconds)
+    {
+        runners.push_back(Runner{name, hours, minutes, seconds});
+    }
 }
 
 int get_n_rows(int max)
 {
+    int n_rows{};
+
     while (true)
     {
         std::cin.clear();
         std::cin.ignore(1024, '\n');
-
-        int n_rows{};
 
         std::cout << "Ange antal rader: ";
 
@@ -107,19 +119,9 @@ void sort(std::vector<Runner> &runners)
 
 int main()
 {
-    std::vector<Runner> runners; // List of runners to be sorted and printed
-    std::ifstream input_file{};
-    std::stringstream ss{};
-    std::string name;
-    unsigned int hours, minutes, seconds;
+    std::vector<Runner> runners{};
 
-    open_file(input_file);
-    ss << input_file.rdbuf();
-
-    while (ss >> name >> hours >> minutes >> seconds)
-    {
-        runners.push_back(Runner{name, hours, minutes, seconds});
-    }
+    get_runners(runners);
 
     int n_rows{get_n_rows(runners.size())};
     sort(runners);

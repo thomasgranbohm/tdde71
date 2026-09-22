@@ -7,19 +7,19 @@
 // Checks if time values are out of bounds/range
 void Time::check_values()
 {
-    if (this->hour < 0 || this->hour >= 24)
+    if (hour < 0 || hour >= 24)
     {
         throw std::out_of_range(ERROR_HOUR_RANGE);
     }
-    if (this->minute < 0 || this->minute >= 60)
+    if (minute < 0 || minute >= 60)
     {
         throw std::out_of_range(ERROR_MINUTE_RANGE);
     }
-    if (this->second < 0 || this->second >= 60)
+    if (second < 0 || second >= 60)
     {
         throw std::out_of_range(ERROR_SECOND_RANGE);
     }
-    if (this->milliseconds < 0 || this->milliseconds >= 1000)
+    if (milliseconds < 0 || milliseconds >= 1000)
     {
         throw std::out_of_range(ERROR_MILLISECOND_RANGE);
     }
@@ -34,7 +34,7 @@ Time::Time(int _hour, int _minute, int _second, int _milliseconds) : hour{_hour}
 int get_next_integer(std::istringstream &iss, int n)
 {
     char c{};
-    std::ostringstream cs;
+    std::ostringstream cs{};
 
     for (int i = 0; i < n; i++)
     {
@@ -68,7 +68,7 @@ void skip_char(std::istringstream &iss, char desired)
 
 Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}, milliseconds{0}
 {
-    int n_chars = str.size();
+    unsigned long n_chars{str.size()};
 
     // Throw if the length of the string does not match an expected format.
     // The expected formats are 'HH:MM:SS.mmm' and 'HH:MM:SS'.
@@ -80,17 +80,17 @@ Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}, milliseconds
     // Extract the time data from the string by using an istringstream:
     std::istringstream iss{str};
 
-    this->hour = get_next_integer(iss, 2);
+    hour = get_next_integer(iss, 2);
     skip_char(iss, ASCII_COLON);
-    this->minute = get_next_integer(iss, 2);
+    minute = get_next_integer(iss, 2);
     skip_char(iss, ASCII_COLON);
-    this->second = get_next_integer(iss, 2);
+    second = get_next_integer(iss, 2);
 
     // Extract the millisecond data if the string has the appropriate length
     if (n_chars > 8)
     {
         skip_char(iss, ASCII_DOT);
-        this->milliseconds = get_next_integer(iss, 3);
+        milliseconds = get_next_integer(iss, 3);
     }
 
     check_values();
@@ -98,7 +98,7 @@ Time::Time(const std::string &str) : hour{0}, minute{0}, second{0}, milliseconds
 
 bool Time::is_am() const
 {
-    return this->hour < 12;
+    return hour < 12;
 }
 
 // Converts the time data to a string with one of the following formats:
@@ -110,32 +110,30 @@ std::string Time::to_string(bool twelwe_hour) const
 {
     std::ostringstream oss{};
 
-    bool is_am = this->is_am();
-
-    int hour{this->hour};
+    int t_hour{hour};
 
     if (twelwe_hour)
     {
-        hour = ((hour + 11) % 12) + 1;
+        t_hour = ((t_hour + 11) % 12) + 1;
     }
 
     oss << std::setfill('0')
-       << std::right
-       << std::setw(2)
-       << hour << ':'
-       << std::setw(2)
-       << this->minute << ':'
-       << std::setw(2)
-       << this->second;
+        << std::right
+        << std::setw(2)
+        << t_hour << ':'
+        << std::setw(2)
+        << minute << ':'
+        << std::setw(2)
+        << second;
 
-    if (this->milliseconds != 0)
+    if (milliseconds != 0)
     {
-        oss << '.' << std::setw(3) << this->milliseconds;
+        oss << '.' << std::setw(3) << milliseconds;
     }
 
     if (twelwe_hour)
     {
-        oss << (is_am ? "am" : "pm");
+        oss << (is_am() ? "am" : "pm");
     }
 
     return oss.str();
@@ -144,15 +142,15 @@ std::string Time::to_string(bool twelwe_hour) const
 // Increases the time by one second.
 void Time::increment()
 {
-    if (++this->second == 60)
+    if (++second == 60)
     {
-        this->second = 0;
-        if (++this->minute == 60)
+        second = 0;
+        if (++minute == 60)
         {
-            this->minute = 0;
-            if (++this->hour == 24)
+            minute = 0;
+            if (++hour == 24)
             {
-                this->hour = 0;
+                hour = 0;
             }
         }
     }
@@ -166,44 +164,47 @@ Time &Time::operator++()
 
 Time Time::operator++(int)
 {
-    Time copy = *this;
+    Time copy{*this};
     increment();
     return copy;
 }
 
-int Time::operator-(const Time &b) const
+float Time::operator-(const Time &b) const
 {
-    return this->get_timestamp() - b.get_timestamp();
+    int ts_diff = get_timestamp() - b.get_timestamp();
+    float ms_diff = (milliseconds - b.get_millisecond()) / 1000;
+
+    return ts_diff + ms_diff;
 };
 
 bool Time::operator<(const Time &b) const
 {
-    return this->get_timestamp() < b.get_timestamp();
+    return get_timestamp() < b.get_timestamp();
 };
 
 bool Time::operator>(const Time &b) const
 {
-    return this->get_timestamp() > b.get_timestamp();
+    return get_timestamp() > b.get_timestamp();
 };
 
 bool Time::operator<=(const Time &b) const
 {
-    return this->get_timestamp() <= b.get_timestamp();
+    return get_timestamp() <= b.get_timestamp();
 };
 
 bool Time::operator>=(const Time &b) const
 {
-    return this->get_timestamp() >= b.get_timestamp();
+    return get_timestamp() >= b.get_timestamp();
 };
 
 bool Time::operator==(const Time &b) const
 {
-    return this->get_timestamp() == b.get_timestamp();
+    return get_timestamp() == b.get_timestamp();
 };
 
 bool Time::operator!=(const Time &b) const
 {
-    return this->get_timestamp() != b.get_timestamp();
+    return get_timestamp() != b.get_timestamp();
 };
 
 std::ostream &operator<<(std::ostream &os, const Time &b)
