@@ -59,7 +59,7 @@ void get_runners(std::vector<Runner> &runners)
         // Open file
         input_file.open(filename);
 
-        // Print error message if file didn't open, otherwise return filestream
+        // Print error message if file didn't open
         if (!input_file.is_open())
         {
             std::cout << "FEL: Filen gick inte att öppna!" << std::endl;
