@@ -47,9 +47,9 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     {
         return *this;
     }
-    LinkedList::Node *t_head = other.head;
-    LinkedList::Node *t_tail = other.tail;
-    unsigned int t_size = other.size;
+    LinkedList::Node *t_head{other.head};
+    LinkedList::Node *t_tail{other.tail};
+    unsigned int t_size{other.size};
 
     other.head = head;
     other.tail = tail;
@@ -66,7 +66,7 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
 
 void LinkedList::push_front(const int a)
 {
-    LinkedList::Node *old = head; // Store old head
+    LinkedList::Node *old{head}; // Store old head
 
     head = new LinkedList::Node{a, nullptr, old}; // Create new head node
 
@@ -85,7 +85,7 @@ void LinkedList::push_front(const int a)
 
 void LinkedList::push_back(const int a)
 {
-    LinkedList::Node *old = tail; // Store old tail
+    LinkedList::Node *old{tail}; // Store old tail
 
     tail = new LinkedList::Node{a, old, nullptr}; // Create new tail node
 
@@ -104,8 +104,8 @@ void LinkedList::push_back(const int a)
 
 int LinkedList::pop_front()
 {
-    int value = head->value;
-    LinkedList::Node *next_head = head->next;
+    int value{head->value};
+    LinkedList::Node *next_head{head->next};
 
     delete head;
     head = next_head;
@@ -118,8 +118,8 @@ int LinkedList::pop_front()
 
 int LinkedList::pop_back()
 {
-    int value = tail->value;
-    LinkedList::Node *next_tail = tail->prev;
+    int value{tail->value};
+    LinkedList::Node *next_tail{tail->prev};
 
     delete tail;
     tail = next_tail;
@@ -138,7 +138,7 @@ int LinkedList::get(const unsigned int n) const
         throw std::out_of_range("n too big");
     }
 
-    LinkedList::Node curr = *head;
+    LinkedList::Node curr{*head};
 
     for (unsigned int i{0}; i < n; i++)
     {
@@ -173,7 +173,7 @@ std::string LinkedList::to_string() const
 
     ss << '[';
 
-    LinkedList::Node *curr = head;
+    LinkedList::Node *curr{head};
 
     while (curr != nullptr)
     {
@@ -200,12 +200,12 @@ void LinkedList::empty_list()
         return;
 
     // Pointer to head, ie adress of head
-    LinkedList::Node *curr = head; // curr is of pointer type
+    LinkedList::Node *curr{head}; // curr is of pointer type
 
     while (true)
     {
         // Get pointer of next node in line
-        LinkedList::Node *n = curr->next; // curr-> is the same as (*curr)
+        LinkedList::Node *n{curr->next}; // curr-> is the same as (*curr)
 
         delete curr;      // delete the value at curr
         if (n == nullptr) // check if end of list and break
@@ -298,7 +298,7 @@ LinkedList::Node *LinkedList::merge_sort(LinkedList::Node *head)
     // example - 4 nodes: nullptr <- a <-> b <-> c <-> d -> nullptr
     //                                         middle
     // example - 5 nodes: nullptr <- a <-> b <-> c <-> d <-> e -> nullptr
-    LinkedList::Node *middle = get_middle_node(head);
+    LinkedList::Node *middle{get_middle_node(head)};
 
     // "Split list in half"          head                                     head2
     // example - 4 nodes:    nullptr <- a <-> b -> nullptr        |   nullptr <- c <-> d -> nullptr
