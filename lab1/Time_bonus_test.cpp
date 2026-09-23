@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 TEST_CASE("Constructors and getters with milliseconds")
 {
     SECTION("Default")
@@ -201,9 +200,9 @@ TEST_CASE("Operators with milliseconds")
         Time t3{1, 2, 4, 500};
         Time t4{1, 3, 4, 500};
         Time t5{2, 3, 4, 500};
-        CHECK(t1 - t0 == 60.0f * 60.0f + 2 * 60.0f + 3.0f);
-        CHECK(t2 - t1 == 0.25f);
-        CHECK(t4 - t3 == 60.0f);
-        CHECK(t5 - t4 == 60.0f * 60.0f);
+        CHECK(t1 - t0 == 60.0 * 60.0 + 2 * 60.0 + 3.0);
+        CHECK(t2 - t1 == 0.25);
+        CHECK(t4 - t3 == 60.0);
+        CHECK(t5 - t4 == 60.0 * 60.0);
     }
 }
