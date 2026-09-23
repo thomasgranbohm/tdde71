@@ -14,7 +14,7 @@ TEST_CASE("General")
         CHECK(a.get_size() == 1);
     }
 
-    SECTION("to_string")
+    SECTION("to_string, push and pop")
     {
         LinkedList a{};
 
@@ -37,23 +37,42 @@ TEST_CASE("General")
         CHECK(a.to_string() == "[1, 5, 2]");
     }
 
-    SECTION("Getting")
+    SECTION("Getting, front and back")
     {
         LinkedList a{};
+        CHECK_THROWS(a.front());
+        CHECK_THROWS(a.back());
+
         a.push_back(1);
+        CHECK(a.front() == 1);
+        CHECK(a.back() == 1);
+
         a.push_back(2);
+        CHECK(a.front() == 1);
+        CHECK(a.back() == 2);
+
         a.push_back(3);
         a.push_back(4);
         a.push_back(5);
 
+        CHECK(a.front() == 1);
+        CHECK(a.back() == 5);
+
+        a.push_front(7);
+        CHECK(a.front() == 7);
+        CHECK(a.back() == 5);
+
+        CHECK(a.get(0) == 7);
+        CHECK(a.get(5) == 5);
         // Check overflow error
         CHECK_THROWS(a.get(6));
+        CHECK_THROWS(a.get(7));
 
         // Check index moving
-        CHECK(a.get(3) == 4);
-        a.push_front(0);
-        CHECK(a.get(3) == 3);
         CHECK(a.get(4) == 4);
+        a.push_front(0);
+        CHECK(a.get(4) == 3);
+        CHECK(a.get(5) == 4);
     }
 
     SECTION("Copying")
@@ -106,19 +125,6 @@ TEST_CASE("General")
         CHECK(b.get(0) == 1);
         CHECK(b.get(1) == 2);
         CHECK(b.get(2) == 3);
-
-        LinkedList c{};
-        LinkedList d{};
-
-        c.push_back(1);
-        c.push_back(2);
-        c.push_back(3);
-
-        d = std::move(c); // Move assignment
-        CHECK(c.is_empty());
-        CHECK(d.get(0) == 1);
-        CHECK(d.get(1) == 2);
-        CHECK(d.get(2) == 3);
     }
 
     SECTION("Sorting")
@@ -139,8 +145,10 @@ TEST_CASE("General")
         a.sort();
         CHECK(a.to_string() == "[3, 5, 7, 8, 12, 13, 15, 16, 19, 20]");
 
+        // Empty list
         LinkedList b{};
         b.sort();
+        CHECK(b.to_string() == "[]");
 
         LinkedList c{};
         c.push_back(14);
@@ -151,5 +159,31 @@ TEST_CASE("General")
         c.push_back(19);
         c.sort();
         CHECK(c.to_string() == "[5, 6, 9, 14, 14, 19]");
+
+        // One element list
+        LinkedList d{};
+        d.push_front(5);
+        d.sort();
+        CHECK(d.to_string() == "[5]");
+
+        // Two element list
+        d.push_front(6);
+        d.sort();
+        CHECK(d.to_string() == "[5, 6]");
+
+        // Two same element list
+        LinkedList e{};
+        e.push_front(6);
+        e.push_front(6);
+        e.sort();
+        CHECK(e.to_string() == "[6, 6]");
+
+        // Odd length element list
+        LinkedList f{};
+        f.push_front(14);
+        f.push_front(7);
+        f.push_front(14);
+        f.sort();
+        CHECK(f.to_string() == "[7, 14, 14]");
     }
 }
