@@ -136,11 +136,11 @@ TEST_CASE("General")
         a.push_back(13);
         a.push_back(3);
 
-        a.bubble_sort();
+        a.sort();
         CHECK(a.to_string() == "[3, 5, 7, 8, 12, 13, 15, 16, 19, 20]");
 
         LinkedList b{};
-        b.bubble_sort();
+        b.sort();
 
         LinkedList c{};
         c.push_back(14);
@@ -149,7 +149,7 @@ TEST_CASE("General")
         c.push_back(14);
         c.push_back(6);
         c.push_back(19);
-        c.bubble_sort();
+        c.sort();
         CHECK(c.to_string() == "[5, 6, 9, 14, 14, 19]");
     }
 }

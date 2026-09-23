@@ -48,15 +48,15 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     Node *t_tail = other.tail;
     unsigned int t_size = other.size;
 
-    other.head = this->head;
-    other.tail = this->tail;
-    other.size = this->size;
+    other.head = head;
+    other.tail = tail;
+    other.size = size;
 
     other.empty_list();
 
-    this->head = t_head;
-    this->tail = t_tail;
-    this->size = t_size;
+    head = t_head;
+    tail = t_tail;
+    size = t_size;
 
     return *this;
 }
@@ -200,58 +200,111 @@ void LinkedList::empty_list()
     tail = nullptr;
 }
 
-void swap_nodes(Node *node1, Node *node2)
-{ // Kan vara fel
-    node1->next = node2->next;
-    node2->prev = node1->prev;
 
-    if (node1->prev != nullptr)
+Node *get_middle_node(Node *head)
+{
+    if (head == nullptr)
+        throw std::logic_error("Do not pass nullptr to get_middle_node (in LinkedList.cpp)!");
+    Node *slow{head};
+    Node *fast{head};
+    while (fast->next != nullptr && fast->next->next != nullptr)
     {
-        node1->prev->next = node2;
+        fast = fast->next->next;
+        slow = slow->next;
     }
-    if (node2->next != nullptr)
-    {
-        node2->next->prev = node1;
-    }
-
-    node1->prev = node2;
-    node2->next = node1;
+    return slow;
 }
 
-void LinkedList::bubble_sort()
+Node *merge(Node *head, Node *head2)
 {
-    if (is_empty())
-        return;
+    Node *new_head {};
+    Node *new_tail {};
 
-    bool has_swapped = false;
-
-    do
+    while (head != nullptr || head2 != nullptr)
     {
-        has_swapped = false;
-        Node *current = head;
-        Node *next = current->next;
-        while (next != nullptr)
+        Node* chosen {}; // Element chosen to be "added" to the new (merged) list
+
+        if (head == nullptr) // Choose next element of list 2 if list 1 is empty
         {
-            if (current->value > next->value)
-            {
-                if (current == head)
-                {
-                    head = next;
-                }
-                else if (next == tail)
-                {
-                    tail = current;
-                }
-
-                swap_nodes(current, next);
-
-                has_swapped = true;
-            }
-            else
-            {
-                current = next;
-            }
-            next = current->next;
+            chosen = head2;
+            head2 = head2->next; // "Move forward to next element of list 2"
         }
-    } while (has_swapped);
+        else if (head2 == nullptr) // Choose next element of list 1 if list 2 is empty
+        {
+            chosen = head;
+            head = head->next; // "Move forward to next element of list 1"
+        }
+        
+        // If both lists aren't empty, choose the element with lowest value
+        else if (head->value <= head2->value)
+        {
+            chosen = head;
+            head = head->next; // "Move forward to next element of list 1"
+        }
+        else
+        {
+            chosen = head2;
+            head2 = head2->next; // "Move forward to next element of list 2"
+        }
+
+        // Make the chosen element new head if new head has not yet been chosen
+        if (new_head == nullptr) 
+        {
+            new_head = chosen;
+        }
+
+        // Otherwise add the new element to the end of the list
+        else
+        {
+            new_tail->next = chosen; // "Add" new node to the list
+            chosen->prev = new_tail; // Set its prev value
+        }
+        new_tail = chosen; // Set tail to the new node
+    }
+
+    new_tail->next = nullptr; // Set tail's next value to nullptr
+
+    return new_head; // Return head of new list
+
+}
+
+Node *merge_sort(Node *head)
+{
+    if (head->next == nullptr) // Base case: the list with head node 'head' has only one element
+        return head;
+
+    // Find "middle" node in the linked list
+    //                                   middle
+    // example - 4 nodes: nullptr <- a <-> b <-> c <-> d -> nullptr
+    //                                         middle
+    // example - 5 nodes: nullptr <- a <-> b <-> c <-> d <-> e -> nullptr
+    Node *middle = get_middle_node(head);
+    
+    // "Split list in half"          head                                     head2
+    // example - 4 nodes:    nullptr <- a <-> b -> nullptr        |   nullptr <- c <-> d -> nullptr
+    // example - 5 nodes:    nullptr <- a <-> b <-> c -> nullptr  |   nullptr <- d <-> e -> nullptr
+    Node *head2 {middle->next}; // Head node of the other "list half"
+    head2->prev = nullptr;      // Separate the lists
+    middle->next = nullptr;
+
+    head = merge_sort(head);
+    head2 = merge_sort(head2);
+
+    return merge(head, head2);
+}
+
+// Merge sort
+void LinkedList::sort()
+{
+    if (size < 2)
+        return;
+    
+    head = merge_sort(head);
+
+    // Update the tail member
+    tail = head;
+    while (tail->next != nullptr)
+    {
+        tail = tail->next;
+    }
 }
