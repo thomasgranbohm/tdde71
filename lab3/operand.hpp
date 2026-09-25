@@ -1,7 +1,7 @@
 #ifndef OPERAND_H
 #define OPERAND_H
 
-#include "Node.hpp"
+#include "node.hpp"
 
 class Operand : public Node
 {

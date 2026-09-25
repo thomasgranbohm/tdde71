@@ -1,4 +1,4 @@
-#include "Operator.hpp"
+#include "operator.hpp"
 
 #include <cmath>
 #include <stdexcept>
@@ -49,3 +49,10 @@ double Power::evaluate() const
 
     return pow(left_side, right_side);
 }
+
+double Condition::evaluate() const
+{
+    double left_side = child_left->evaluate();
+
+    return left_side != 0.0 ? child_right->evaluate() : 0.0;
+};

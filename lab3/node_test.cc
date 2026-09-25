@@ -2,8 +2,8 @@
 #include <cmath> // abs
 #include <memory>
 
-#include "Operand.hpp"
-#include "Operator.hpp"
+#include "operand.hpp"
+#include "operator.hpp"
 #include "catch.hpp"
 
 TEST_CASE("operand real")
@@ -99,6 +99,14 @@ TEST_CASE("conversion to string")
     {
         CHECK(a->postfix() == "1.000 1 - 2 5 * +");
     }
+}
+
+TEST_CASE("custom")
+{
+    Node *a = new Addition{
+        new Integer{1}, new Addition{new Integer{4}, new Integer{3}}};
+
+    CHECK(a->postfix() == "1 4 3 + +");
 }
 
 #if 0 // Flytta ned denna rad för att aktivera nästa TEST_CASE
