@@ -1,7 +1,9 @@
 #include <limits>
 #include <cmath> // abs
 #include <memory>
-#include "main.hpp"
+
+#include "Operand.hpp"
+#include "Operator.hpp"
 #include "catch.hpp"
 
 TEST_CASE("operand real")
