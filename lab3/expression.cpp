@@ -1,10 +1,9 @@
-#include "expression.hpp";
 
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-#include <stack>
 
+#include "expression.hpp"
 #include "node.hpp"
 #include "operator.hpp"
 #include "operand.hpp"
@@ -73,4 +72,24 @@ Expression::Expression(std::string postfix)
             stack.push(a);
         }
     }
+}
+
+double Expression::evaluate() const
+{
+    if (stack.empty())
+    {
+        throw std::logic_error("stack is empty");
+    }
+
+    return stack.top()->evaluate();
+}
+
+std::string Expression::to_string() const
+{
+    if (stack.empty())
+    {
+        throw std::logic_error("stack is empty");
+    }
+
+    return stack.top()->infix();
 }

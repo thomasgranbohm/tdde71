@@ -9,6 +9,9 @@
 class Operator : public Node
 {
 public:
+    Operator(const Operator &other) = delete;
+    Operator &operator=(const Operator &other) = delete;
+
     std::string postfix() const override;
     std::string prefix() const override;
     std::string infix() const override;
