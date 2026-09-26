@@ -11,10 +11,12 @@ class Operator : public Node
 public:
     Operator(const Operator &other) = delete;
     Operator &operator=(const Operator &other) = delete;
+    ~Operator();
 
     std::string postfix() const override;
     std::string prefix() const override;
     std::string infix() const override;
+    char to_string() const { return sign; }
 
     enum signs
     {

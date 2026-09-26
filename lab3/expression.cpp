@@ -11,9 +11,9 @@
 Expression::Expression(std::string str)
 {
     Postfix p{str};
-
-    std::istringstream iss{p.to_string()};
     std::string current{};
+    std::istringstream iss{p.to_string()};
+
     while (iss >> current)
     {
         if (std::all_of(begin(current), end(current), ::isdigit))
@@ -41,9 +41,8 @@ Expression::Expression(std::string str)
             Node *r{stack.top()};
             stack.pop();
 
-            // Vi vill fortfarande faktiskt ha kvar alla noder på stacken
             Node *l{stack.top()};
-            stack.push(r);
+            stack.pop();
 
             switch (current.at(0))
             {

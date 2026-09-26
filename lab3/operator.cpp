@@ -3,6 +3,12 @@
 #include <cmath>
 #include <stdexcept>
 
+Operator::~Operator()
+{
+    delete child_left;
+    delete child_right;
+}
+
 std::string Operator::postfix() const
 {
     return child_left->postfix() + " " + child_right->postfix() + " " + sign;
