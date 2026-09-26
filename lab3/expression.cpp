@@ -6,7 +6,7 @@
 #include "node.hpp"
 #include "operator.hpp"
 #include "operand.hpp"
-#include "postfix.h"
+#include "postfix.hpp"
 
 Expression::Expression(std::string str)
 {
@@ -41,8 +41,9 @@ Expression::Expression(std::string str)
             Node *r{stack.top()};
             stack.pop();
 
+            // Vi vill fortfarande faktiskt ha kvar alla noder på stacken
             Node *l{stack.top()};
-            stack.pop();
+            stack.push(r);
 
             switch (current.at(0))
             {
@@ -119,4 +120,29 @@ std::string Expression::to_string() const
 
     return stack.top()
         ->infix();
+}
+
+Expression::Expression(Expression &&other)
+{
+    stack.swap(other.stack);
+}
+
+Expression &Expression::operator=(Expression &&other)
+{
+    if (this != &other)
+    {
+        stack.swap(other.stack);
+    }
+
+    return *this;
+}
+
+void Expression::empty_stack()
+{
+    while (!stack.empty())
+    {
+        delete stack.top();
+
+        stack.pop();
+    }
 }

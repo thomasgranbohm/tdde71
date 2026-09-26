@@ -5,6 +5,18 @@ using namespace std;
 
 int main()
 {
+
+    // Expression *e = new Expression("1 + 2 - 3 * 4 / 5 ^ 6");
+
+    // cout
+    //     << e->evaluate() << endl
+    //     << e->to_string() << endl
+    //     << e->to_postfix() << endl
+    //     << e->to_prefix() << endl
+    //     << e->to_infix() << endl;
+
+    // delete e;
+
     string line;
     Expression *e{};
     while (getline(cin, line))
@@ -44,7 +56,7 @@ int main()
         {
             try
             {
-                e = new Expression(line);
+                e = std::move(new Expression(line));
             }
             catch (const std::exception &e)
             {
@@ -52,5 +64,10 @@ int main()
             }
         }
     }
+
+    // tycker inte att det här borde behövas
+    // går inte e "out of scope" när main returnerar?
+    delete e;
+
     return 0;
 }
