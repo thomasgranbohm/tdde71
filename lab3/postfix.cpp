@@ -46,6 +46,7 @@ bool Token::is_integer() const
 
 bool Token::is_decimal() const
 {
+    // FIXME: postfix deklarerar inte variablerna med {}...
     bool valid_chars = all_of(token.begin(), token.end(), [](char c) -> bool
                               { return c == '.' || isdigit(c); });
     bool one_dot = count(token.begin(), token.end(), '.') == 1;

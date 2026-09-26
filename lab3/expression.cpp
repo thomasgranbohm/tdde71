@@ -19,13 +19,13 @@ Expression::Expression(std::string str)
         if (std::all_of(begin(current), end(current), ::isdigit))
         {
             // Vi har hittat ett heltal
-            int a = std::stoi(current);
+            int a{std::stoi(current)};
             stack.push(new Integer{a});
         }
         else if (isdigit(current.at(0)))
         {
             // Vi hoppas ordet är ett flyttal
-            double a = std::stod(current);
+            double a{std::stod(current)};
             stack.push(new Real{a});
         }
         else
