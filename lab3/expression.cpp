@@ -76,22 +76,47 @@ Expression::Expression(std::string str)
     }
 }
 
-double Expression::evaluate() const
+void Expression::check_empty() const
 {
     if (stack.empty())
     {
         throw std::logic_error("stack is empty");
     }
+}
 
-    return stack.top()->evaluate();
+double Expression::evaluate() const
+{
+    check_empty();
+
+    return stack.top()
+        ->evaluate();
+}
+
+std::string Expression::to_infix() const
+{
+    return to_string();
+}
+
+std::string Expression::to_postfix() const
+{
+    check_empty();
+
+    return stack.top()
+        ->postfix();
+}
+
+std::string Expression::to_prefix() const
+{
+    check_empty();
+
+    return stack.top()
+        ->prefix();
 }
 
 std::string Expression::to_string() const
 {
-    if (stack.empty())
-    {
-        throw std::logic_error("stack is empty");
-    }
+    check_empty();
 
-    return stack.top()->infix();
+    return stack.top()
+        ->infix();
 }
