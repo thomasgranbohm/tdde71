@@ -23,7 +23,7 @@ double Division::evaluate() const
 {
     double right_side = child_right->evaluate();
 
-    if (right_side)
+    if (right_side == 0)
     {
         throw std::logic_error("division by zero not allowed");
     }

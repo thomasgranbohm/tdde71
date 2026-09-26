@@ -1,4 +1,3 @@
-
 #include <algorithm>
 #include <cctype>
 #include <sstream>
@@ -7,10 +6,13 @@
 #include "node.hpp"
 #include "operator.hpp"
 #include "operand.hpp"
+#include "postfix.h"
 
-Expression::Expression(std::string postfix)
+Expression::Expression(std::string str)
 {
-    std::istringstream iss{postfix};
+    Postfix p{str};
+
+    std::istringstream iss{p.to_string()};
     std::string current{};
     while (iss >> current)
     {
