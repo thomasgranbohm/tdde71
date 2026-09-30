@@ -1,5 +1,4 @@
 #include <limits>
-#include <cmath> // abs
 #include <memory>
 
 #include "operand.hpp"

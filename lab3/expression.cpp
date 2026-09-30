@@ -1,147 +1,162 @@
+#include "expression.hpp"
+
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include <stack>
+#include <memory>
 
-#include "expression.hpp"
 #include "node.hpp"
 #include "operator.hpp"
 #include "operand.hpp"
 #include "postfix.hpp"
 
-Expression::Expression(std::string str)
+Expression::Expression(Expression &&other) : root{nullptr}
 {
-    Postfix p{str};
+    root = other.root;
+    other.root = nullptr;
+}
+
+Expression &Expression::operator=(Expression &&other)
+{
+    if (this == &other)
+        return *this;
+
+    delete root;
+
+    root = other.root;
+    other.root = nullptr;
+
+    return *this;
+
+    // Alternatively, you can swap the two roots and let 'other' take care of it
+    // in its destructor
+}
+
+void Expression::from_postfix(const std::string &postfix)
+{
+    // Commented out code is from before the smart pointer bonus assignment
+
+    std::istringstream iss{postfix};
     std::string current{};
-    std::istringstream iss{p.to_string()};
+    // std::stack<Node *> stack{};
+    std::stack<std::unique_ptr<Node>> stack{};
+
+    delete root; // Delete old tree
+    root = nullptr;
 
     while (iss >> current)
     {
         if (std::all_of(begin(current), end(current), ::isdigit))
         {
-            // Vi har hittat ett heltal
-            int a{std::stoi(current)};
-            stack.push(new Integer{a});
+            // Integer
+            int a = std::stoi(current);
+
+            // stack.push(new Integer{a});
+            stack.push(std::make_unique<Integer>(a));
         }
         else if (isdigit(current.at(0)))
         {
-            // Vi hoppas ordet är ett flyttal
-            double a{std::stod(current)};
-            stack.push(new Real{a});
+            // Float
+            double a = std::stod(current);
+            
+            // stack.push(new Real{a});
+            stack.push(std::make_unique<Real>(a));
         }
         else
         {
-            // Vi hoppas ordet är en operator
+            // Operator
             if (stack.size() < 2)
-            {
-                throw std::logic_error("malformatted expression");
-            }
+                throw std::logic_error("Missing operands for operator");
 
-            Operator *a{};
+            // Operator *a{};
+            std::unique_ptr<Operator> a{};
 
-            Node *r{stack.top()};
+            // Node *r{stack.top()};
+            std::unique_ptr<Node> r = std::move(stack.top());
             stack.pop();
 
-            Node *l{stack.top()};
+            // Node *l{stack.top()};
+            std::unique_ptr<Node> l = std::move(stack.top());
             stack.pop();
 
             switch (current.at(0))
             {
             case Operator::signs::addition:
-                a = new Addition{l, r};
+                // a = new Addition{l, r};
+
+                // Note: if we don't release l and r, the pointers they hold will be
+                // deleted at the end of this loop iteration because they go out of scope
+                a = std::make_unique<Addition>(l.release(), r.release());
                 break;
             case Operator::signs::subtraction:
-                a = new Subtraction{l, r};
+                // a = new Subtraction{l, r};
+                a = std::make_unique<Subtraction>(l.release(), r.release());
                 break;
             case Operator::signs::multiplication:
-                a = new Multiplication{l, r};
+                // a = new Multiplication{l, r};
+                a = std::make_unique<Multiplication>(l.release(), r.release());
                 break;
             case Operator::signs::division:
-                a = new Division{l, r};
+                // a = new Division{l, r};
+                a = std::make_unique<Division>(l.release(), r.release());
                 break;
             case Operator::signs::power:
-                a = new Power{l, r};
+                // a = new Power{l, r};
+                a = std::make_unique<Power>(l.release(), r.release());
                 break;
             case Operator::signs::modulo:
-                a = new Modulo{l, r};
+                // a = new Modulo{l, r};
+                a = std::make_unique<Modulo>(l.release(), r.release());
                 break;
             case Operator::signs::condition:
-                a = new Condition{l, r};
+                // a = new Condition{l, r};
+                a = std::make_unique<Condition>(l.release(), r.release());
                 break;
             default:
-                throw std::logic_error("undefined operator");
+                throw std::logic_error("Undefined operator");
             }
 
-            stack.push(a);
+            stack.push(std::move(a));
         }
     }
+    if (stack.size() != 1)
+        throw std::logic_error("Stack has 0 or more than 1 element "
+                               "at end of Expression constructor");
+
+    root = stack.top().release(); // If we don't release the top element, 'stack' will delete it ('stack' goes out of scope)
 }
 
-void Expression::check_empty() const
+void Expression::from_infix(const std::string &infix)
 {
-    if (stack.empty())
-    {
-        throw std::logic_error("stack is empty");
-    }
-}
-
-double Expression::evaluate() const
-{
-    check_empty();
-
-    return stack.top()
-        ->evaluate();
-}
-
-std::string Expression::to_infix() const
-{
-    return to_string();
+    Postfix postfix{infix};
+    from_postfix(postfix.to_string());
 }
 
 std::string Expression::to_postfix() const
 {
-    check_empty();
-
-    return stack.top()
-        ->postfix();
+    if (root == nullptr)
+        throw std::logic_error("Expression is empty");
+    return root->postfix();
 }
 
 std::string Expression::to_prefix() const
 {
-    check_empty();
-
-    return stack.top()
-        ->prefix();
+    if (root == nullptr)
+        throw std::logic_error("Expression is empty");
+    return root->prefix();
 }
 
-std::string Expression::to_string() const
+std::string Expression::to_infix() const
 {
-    check_empty();
-
-    return stack.top()
-        ->infix();
+    if (root == nullptr)
+        throw std::logic_error("Expression is empty");
+    return root->infix();
 }
 
-Expression::Expression(Expression &&other)
+double Expression::evaluate() const
 {
-    stack.swap(other.stack);
-}
-
-Expression &Expression::operator=(Expression &&other)
-{
-    if (this != &other)
-    {
-        stack.swap(other.stack);
-    }
-
-    return *this;
-}
-
-void Expression::empty_stack()
-{
-    while (!stack.empty())
-    {
-        delete stack.top();
-
-        stack.pop();
-    }
+    if (root == nullptr)
+        throw std::logic_error("Expression is empty");
+    return root->evaluate();
 }

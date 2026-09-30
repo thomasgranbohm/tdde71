@@ -1,95 +1,94 @@
-#include <iomanip>
 #include <iostream>
-#include <sstream>
+#include <stdexcept>
 #include <vector>
+#include <sstream>
+// #include <cstdlib> // std::exit
 
 #include "expression.hpp"
 
-using namespace std;
+std::vector<Expression> saved_expressions{};
+
+// Returns false if program should quit
+bool process_command(const std::string &command, Expression &e)
+{
+    if (command == "calc")
+        std::cout << e.evaluate() << std::endl;
+    else if (command == "postfix")
+        std::cout << e.to_postfix() << std::endl;
+    else if (command == "prefix")
+        std::cout << e.to_prefix() << std::endl;
+    else if (command == "infix")
+        std::cout << e.to_infix() << std::endl;
+    else if (command == "quit")
+        return false;
+        // std::exit(0); // If you use this, the stack allocated variables' destructors won't run
+    else if (command == "save") {
+        saved_expressions.push_back(Expression{e.to_infix()});
+    }
+    else if (command == "list") {
+        for (unsigned int i{1}; i <= saved_expressions.size(); i++)
+        {
+            std::cout << i << ": " << saved_expressions.at(i-1).to_infix() << "\n";
+        }
+        std::cout << std::flush;
+    }
+    else
+    {
+        std::string s;
+        std::istringstream iss{command};
+        iss >> s;
+        if (s == "activate")
+        {
+            int index{};
+
+            if (iss.eof())
+                throw std::logic_error("No index inputted ");
+                
+            iss >> index;
+            if (iss.fail())
+                throw std::logic_error("Please input a number!");
+
+            else if (static_cast<unsigned int>(index) > saved_expressions.size() || index < 1)
+                throw std::logic_error("There is no expression at index " + std::to_string(index));
+            
+            
+            e.from_postfix(saved_expressions.at(index - 1).to_postfix());
+        }
+        else
+            throw std::logic_error("Invalid command");
+    }
+
+    return true;
+}
 
 int main()
 {
-    string line;
-    Expression *e{};
-    std::vector<Expression *> saved{};
+    std::string line{};
+    Expression e{};
 
-    while (getline(cin, line))
+    while (std::getline(std::cin, line))
     {
-        if (line.length() == 0)
-            continue;
-
-        if (line.at(0) == ':')
+        try
         {
-            line.erase(0, 1);
-            istringstream oss{line};
-            string command{};
-            oss >> command;
-
-            if (command == "quit" || command == "exit")
-            {
-                break;
-            }
-            else if (command == "list")
-            {
-                cout << "===== List of saved expressions: =====" << endl;
-                for (unsigned int i{0}; i < saved.size(); i++)
-                {
-                    cout << setw(3) << setfill(' ') << i << ". " << saved.at(i)->to_string() << endl;
-                }
-            }
-
-            // FIXME: maybe some buggy behaviour here when e is undefined
-
-            if (e == nullptr)
-            {
-                cerr << "No expression in memory!" << endl;
+            if (line.empty())
                 continue;
-            }
 
-            if (command == "calc")
+            if (line.at(0) == ':') // If input is command
             {
-                cout << e->evaluate() << endl;
+                if (!process_command(line.substr(1), e))
+                    break; // command was :quit
             }
-            else if (command == "postfix")
+            else
             {
-                cout << e->to_postfix() << endl;
-            }
-            else if (command == "prefix")
-            {
-                cout << e->to_prefix() << endl;
-            }
-            else if (command == "infix")
-            {
-                cout << e->to_infix() << endl;
-            }
-            else if (command == "save")
-            {
-                saved.push_back(e);
-            }
-            else if (command == "activate")
-            {
-                int n{};
-                oss >> n;
-
-                e = saved.at(n);
+                e.from_infix(line);
             }
         }
-        else
+
+        catch (const std::exception &exception)
         {
-            try
-            {
-                e = std::move(new Expression(line));
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << e.what() << '\n';
-            }
+            std::cerr << exception.what() << "\n";
         }
     }
-
-    // tycker inte att det här borde behövas
-    // går inte e "out of scope" när main returnerar?
-    delete e;
 
     return 0;
 }
