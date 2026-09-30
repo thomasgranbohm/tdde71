@@ -5,7 +5,8 @@
 
 class Operand : public Node
 {
-    // empty class, woohoo
+    std::string prefix() const override { return postfix(); }
+    std::string infix() const override { return postfix(); }
 };
 
 class Real : public Operand
@@ -19,8 +20,6 @@ public:
     }
 
     std::string postfix() const override;
-    std::string prefix() const override { return postfix(); }
-    std::string infix() const override { return postfix(); }
 
 protected:
     const double value;
@@ -37,8 +36,6 @@ public:
     }
 
     std::string postfix() const override;
-    std::string prefix() const override { return postfix(); }
-    std::string infix() const override { return postfix(); }
 
 protected:
     const int value;
