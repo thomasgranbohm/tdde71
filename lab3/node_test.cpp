@@ -100,12 +100,57 @@ TEST_CASE("conversion to string")
     }
 }
 
-TEST_CASE("custom")
+TEST_CASE("infix, postfix, prefix all the operators")
 {
-    Node *a = new Addition{
-        new Integer{1}, new Addition{new Integer{4}, new Integer{3}}};
-
-    CHECK(a->postfix() == "1 4 3 + +");
+    SECTION("Addition")
+    {
+        Node *a = new Addition{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 + 420.000 )");
+        CHECK(a->prefix() == "+ 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 +");
+    }
+    SECTION("Subtraction")
+    {
+        Node *a = new Subtraction{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 - 420.000 )");
+        CHECK(a->prefix() == "- 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 -");
+    }
+    SECTION("Multiplication")
+    {
+        Node *a = new Multiplication{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 * 420.000 )");
+        CHECK(a->prefix() == "* 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 *");
+    }
+    SECTION("Division")
+    {
+        Node *a = new Division{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 / 420.000 )");
+        CHECK(a->prefix() == "/ 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 /");
+    }
+    SECTION("Power")
+    {
+        Node *a = new Power{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 ^ 420.000 )");
+        CHECK(a->prefix() == "^ 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 ^");
+    }
+    SECTION("Modulo")
+    {
+        Node *a = new Modulo{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 % 420.000 )");
+        CHECK(a->prefix() == "% 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 %");
+    }
+    SECTION("Condition")
+    {
+        Node *a = new Condition{new Integer{1337}, new Real{420}};
+        CHECK(a->infix() == "( 1337 ? 420.000 )");
+        CHECK(a->prefix() == "? 1337 420.000");
+        CHECK(a->postfix() == "1337 420.000 ?");
+    }
 }
 
 TEST_CASE("Modulo")
@@ -134,5 +179,21 @@ TEST_CASE("Modulo")
     }
 }
 
-#if 0 // Flytta ned denna rad för att aktivera nästa TEST_CASE
-#endif
+TEST_CASE("condition operator")
+{
+    Node *a = new Condition{
+        new Subtraction{new Integer{2001}, new Real{1984}},
+        new Division{new Integer{60}, new Integer{61}}};
+    Node *b = new Condition{
+        new Integer{0},
+        new Division{new Integer{60}, new Integer{61}}};
+
+    SECTION("should pass")
+    {
+        CHECK(compare_equal(a->evaluate(), 0.9836065574));
+    }
+    SECTION("shouldn't pass")
+    {
+        CHECK(b->evaluate() == 0);
+    }
+}
