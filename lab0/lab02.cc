@@ -40,33 +40,15 @@ unsigned int get_total_seconds(Runner const &runner)
     return runner.hours * 60 * 60 + runner.minutes * 60 + runner.seconds;
 }
 
-void get_runners(std::vector<Runner> &runners)
+void get_runners_from_file(std::vector<Runner> &runners, std::ifstream &file)
 {
-    std::ifstream input_file{};
-    std::string filename{};
 
     std::string name{};
     unsigned int hours{};
     unsigned int minutes{};
     unsigned int seconds{};
 
-    do
-    {
-        // Get filename
-        std::cout << "Ange filnamn: ";
-        std::cin >> filename;
-
-        // Open file
-        input_file.open(filename);
-
-        // Print error message if file didn't open
-        if (!input_file.is_open())
-        {
-            std::cout << "FEL: Filen gick inte att öppna!" << std::endl;
-        }
-    } while (!input_file.is_open());
-
-    while (input_file >> name >> hours >> minutes >> seconds)
+    while (file >> name >> hours >> minutes >> seconds)
     {
         runners.push_back(Runner{name, hours, minutes, seconds});
     }
@@ -120,8 +102,26 @@ void sort(std::vector<Runner> &runners)
 int main()
 {
     std::vector<Runner> runners{};
+    std::ifstream input_file{};
+    std::string filename{};
 
-    get_runners(runners);
+    do
+    {
+        // Get filename
+        std::cout << "Ange filnamn: ";
+        std::cin >> filename;
+
+        // Open file
+        input_file.open(filename);
+
+        // Print error message if file didn't open
+        if (!input_file.is_open())
+        {
+            std::cout << "FEL: Filen gick inte att öppna!" << std::endl;
+        }
+    } while (!input_file.is_open());
+
+    get_runners_from_file(runners, input_file);
 
     int n_rows{get_n_rows(runners.size())};
     sort(runners);
