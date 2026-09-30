@@ -50,7 +50,7 @@ void Expression::from_postfix(const std::string &postfix)
         if (std::all_of(begin(current), end(current), ::isdigit))
         {
             // Integer
-            int a = std::stoi(current);
+            int a{std::stoi(current)};
 
             // stack.push(new Integer{a});
             stack.push(std::make_unique<Integer>(a));
@@ -58,8 +58,8 @@ void Expression::from_postfix(const std::string &postfix)
         else if (isdigit(current.at(0)))
         {
             // Float
-            double a = std::stod(current);
-            
+            double a{std::stod(current)};
+
             // stack.push(new Real{a});
             stack.push(std::make_unique<Real>(a));
         }
@@ -73,11 +73,11 @@ void Expression::from_postfix(const std::string &postfix)
             std::unique_ptr<Operator> a{};
 
             // Node *r{stack.top()};
-            std::unique_ptr<Node> r = std::move(stack.top());
+            std::unique_ptr<Node> r{std::move(stack.top())};
             stack.pop();
 
             // Node *l{stack.top()};
-            std::unique_ptr<Node> l = std::move(stack.top());
+            std::unique_ptr<Node> l{std::move(stack.top())};
             stack.pop();
 
             switch (current.at(0))

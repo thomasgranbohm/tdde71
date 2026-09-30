@@ -19,7 +19,7 @@ std::string Operator::infix() const
 
 double Division::evaluate() const
 {
-    double right_side = child_right->evaluate();
+    double right_side{child_right->evaluate()};
 
     if (right_side == 0.0)
     {
@@ -31,10 +31,10 @@ double Division::evaluate() const
 
 double Power::evaluate() const
 {
-    double left_side = child_left->evaluate();
-    double right_side = child_right->evaluate();
+    double left_side{child_left->evaluate()};
+    double right_side{child_right->evaluate()};
 
-    Real *casted_right = dynamic_cast<Real *>(child_right);
+    Real *casted_right{dynamic_cast<Real *>(child_right)};
 
     if (left_side < 0 && casted_right != nullptr)
     {
@@ -50,7 +50,7 @@ double Power::evaluate() const
 
 double Condition::evaluate() const
 {
-    double left_side = child_left->evaluate();
+    double left_side{child_left->evaluate()};
 
     return left_side != 0.0 ? child_right->evaluate() : 0.0;
 };
