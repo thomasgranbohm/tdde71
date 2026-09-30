@@ -79,7 +79,7 @@
     },
     {
       "type": "cppbuild",
-      "label": "Build lab 3",
+      "label": "Build lab 3 test",
       "command": "/usr/lib64/ccache/g++",
       "args": [
         "-fdiagnostics-color=always",
@@ -89,9 +89,9 @@
         "${fileDirname}/operand.cpp",
         "${fileDirname}/operator.cpp",
         "${fileDirname}/postfix.cpp",
-        "${fileDirname}/expression_test.cpp",
+        "${fileDirname}/node_test.cpp",
         "-o",
-        "${fileDirname}/a.out"
+        "${fileDirname}/test_lab3.out"
       ],
       "options": {
         "cwd": "${fileDirname}"
@@ -105,7 +105,7 @@
     },
     {
       "type": "cppbuild",
-      "label": "Build lab 3.13",
+      "label": "Build lab 3",
       "command": "/usr/lib64/ccache/g++",
       "args": [
         "-fdiagnostics-color=always",

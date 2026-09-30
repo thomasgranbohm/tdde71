@@ -5,8 +5,13 @@
 
 class Operand : public Node
 {
-    std::string prefix() const override { return postfix(); }
-    std::string infix() const override { return postfix(); }
+public:
+    std::string prefix() const override { return get_string(); }
+    std::string infix() const override { return get_string(); }
+    std::string postfix() const override { return get_string(); }
+
+protected:
+    virtual std::string get_string() const = 0;
 };
 
 class Real : public Operand
@@ -19,7 +24,7 @@ public:
         return value;
     }
 
-    std::string postfix() const override;
+    std::string get_string() const override;
 
 protected:
     const double value;
@@ -35,7 +40,7 @@ public:
         return value;
     }
 
-    std::string postfix() const override;
+    std::string get_string() const override;
 
 protected:
     const int value;
