@@ -57,25 +57,10 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     {
         return *this;
     }
-    // We use std::swap instead
-    // Node *t_head{other.head};
-    // Node *t_tail{other.tail};
-    // unsigned int t_size{other.size};
 
     std::swap(head, other.head);
     std::swap(tail, other.tail);
     std::swap(size, other.size);
-    // we use std::swap instead
-    // other.head = head;
-    // other.tail = tail;
-    // other.size = size;
-
-    // other.empty_list();  // Destructor will call empty_list()
-
-    // we use std::swap instead
-    // head = t_head;
-    // tail = t_tail;
-    // size = t_size;
 
     return *this;
 }
