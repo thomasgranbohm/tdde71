@@ -1,15 +1,28 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include "LinkedList.hpp"
+#include "LinkedList.h"
+
+// Constructor
+LinkedList::LinkedList() : size{0}, head{nullptr}, tail{nullptr}
+{
+};
+
+void LinkedList::add_to_list(LinkedList const &from)
+{
+    if (&from == this)
+        throw std::logic_error("Do not pass *this to LinkedList::add_to_list");
+    
+    for (unsigned int i{0}; i < from.get_size(); i++)
+    {
+        push_back(from.get(i));
+    }
+}
 
 // Copy constructor
 LinkedList::LinkedList(LinkedList const &b) : size{0}, head{nullptr}, tail{nullptr}
 {
-    for (unsigned int i{0}; i < b.size; i++)
-    {
-        this->push_back(b.get(i));
-    }
+    add_to_list(b);
 }
 
 // Copy assignment
@@ -21,10 +34,7 @@ LinkedList &LinkedList::operator=(LinkedList const &b)
     // Reset list
     empty_list();
 
-    for (unsigned int i{0}; i < b.size; i++)
-    {
-        this->push_back(b.get(i));
-    }
+    add_to_list(b);
 
     return *this;
 }
@@ -47,15 +57,15 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     {
         return *this;
     }
-    LinkedList::Node *t_head{other.head};
-    LinkedList::Node *t_tail{other.tail};
+    Node *t_head{other.head};
+    Node *t_tail{other.tail};
     unsigned int t_size{other.size};
 
     other.head = head;
     other.tail = tail;
     other.size = size;
 
-    other.empty_list();
+    // other.empty_list();  // Destructor will call empty_list()
 
     head = t_head;
     tail = t_tail;
@@ -64,11 +74,17 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     return *this;
 }
 
+// Destructor
+LinkedList::~LinkedList()
+{
+    empty_list();
+}
+
 void LinkedList::push_front(const int a)
 {
-    LinkedList::Node *old{head}; // Store old head
+    Node *old{head}; // Store old head
 
-    head = new LinkedList::Node{a, nullptr, old}; // Create new head node
+    head = new Node{a, nullptr, old}; // Create new head node
 
     // If list is empty, set new head as tail too
     if (is_empty())
@@ -85,9 +101,9 @@ void LinkedList::push_front(const int a)
 
 void LinkedList::push_back(const int a)
 {
-    LinkedList::Node *old{tail}; // Store old tail
+    Node *old{tail}; // Store old tail
 
-    tail = new LinkedList::Node{a, old, nullptr}; // Create new tail node
+    tail = new Node{a, old, nullptr}; // Create new tail node
 
     // If list is empty, set new tail as head too
     if (is_empty())
@@ -104,12 +120,19 @@ void LinkedList::push_back(const int a)
 
 int LinkedList::pop_front()
 {
-    int value{head->value};
-    LinkedList::Node *next_head{head->next};
+    if (is_empty())
+        throw std::logic_error("Do not call pop_front on an empty list.");
 
+    int value{head->value};
+    Node *next_head{head->next};
+    
     delete head;
     head = next_head;
-    head->prev = nullptr;
+    if (next_head != nullptr) {
+        head->prev = nullptr;
+    } else {
+        tail = nullptr;
+    }
 
     size--;
 
@@ -118,13 +141,20 @@ int LinkedList::pop_front()
 
 int LinkedList::pop_back()
 {
+    if (is_empty())
+        throw std::logic_error("Do not call pop_back on an empty list.");
+
     int value{tail->value};
-    LinkedList::Node *next_tail{tail->prev};
+    Node *next_tail{tail->prev};
 
     delete tail;
     tail = next_tail;
-    tail->next = nullptr;
-
+    if (next_tail != nullptr) {
+        tail->next = nullptr;
+    } else {
+        head = nullptr;
+    }
+    
     size--;
 
     return value;
@@ -133,12 +163,15 @@ int LinkedList::pop_back()
 // Returns the value of the nth node
 int LinkedList::get(const unsigned int n) const
 {
-    if (n > size - 1)
+    if (is_empty()) {
+        throw std::logic_error("calling get on an empty list");
+    }
+    else if (n > size - 1)
     {
-        throw std::out_of_range("n too big");
+        throw std::out_of_range("Parameter n is too large (in LinkedList::get)");
     }
 
-    LinkedList::Node curr{*head};
+    Node curr{*head};
 
     for (unsigned int i{0}; i < n; i++)
     {
@@ -150,18 +183,20 @@ int LinkedList::get(const unsigned int n) const
 
 int LinkedList::front() const
 {
-    if (head == nullptr)
+    if (is_empty())
     {
-        throw std::out_of_range("list empty");
+        throw std::out_of_range("Trying to get front element, "
+                                "but list is empty (in LinkedList::front)");
     }
 
     return head->value;
 }
 int LinkedList::back() const
 {
-    if (tail == nullptr)
+    if (is_empty())
     {
-        throw std::out_of_range("list empty");
+        throw std::out_of_range("Trying to get back element, "
+                                "but list is empty (in LinkedList::back)");
     }
 
     return tail->value;
@@ -173,7 +208,7 @@ std::string LinkedList::to_string() const
 
     ss << '[';
 
-    LinkedList::Node *curr{head};
+    Node *curr{head};
 
     while (curr != nullptr)
     {
@@ -200,34 +235,39 @@ void LinkedList::empty_list()
         return;
 
     // Pointer to head, ie adress of head
-    LinkedList::Node *curr{head}; // curr is of pointer type
+    // Node *curr{head}; // curr is of pointer type
 
-    while (true)
+    while (!is_empty())
     {
-        // Get pointer of next node in line
-        LinkedList::Node *n{curr->next}; // curr-> is the same as (*curr)
-
-        delete curr;      // delete the value at curr
-        if (n == nullptr) // check if end of list and break
-        {
-            break;
-        }
-
-        // otherwise, continue with n as curr
-        curr = n;
+        pop_front();
     }
+
+    // while (true)
+    // {
+    //     // Get pointer of next node in line
+    //     Node *n{curr->next}; // curr-> is the same as (*curr)
+
+    //     delete curr;      // delete the value at curr
+    //     if (n == nullptr) // check if end of list and break
+    //     {
+    //         break;
+    //     }
+
+    //     // otherwise, continue with n as curr
+    //     curr = n;
+    // }
 
     size = 0;
     head = nullptr;
     tail = nullptr;
 }
 
-LinkedList::Node *LinkedList::get_middle_node(LinkedList::Node *head) const
+LinkedList::Node *LinkedList::get_middle_node(Node *head) const
 {
     if (head == nullptr)
         throw std::logic_error("Do not pass nullptr to get_middle_node (in LinkedList.cpp)!");
-    LinkedList::Node *slow{head};
-    LinkedList::Node *fast{head};
+    Node *slow{head};
+    Node *fast{head};
     while (fast->next != nullptr && fast->next->next != nullptr)
     {
         fast = fast->next->next;
@@ -236,14 +276,14 @@ LinkedList::Node *LinkedList::get_middle_node(LinkedList::Node *head) const
     return slow;
 }
 
-LinkedList::Node *LinkedList::merge(LinkedList::Node *head, LinkedList::Node *head2)
+LinkedList::Node *LinkedList::merge(Node *head, Node *head2)
 {
-    LinkedList::Node *new_head{};
-    LinkedList::Node *new_tail{};
+    Node *new_head{};
+    Node *new_tail{};
 
     while (head != nullptr || head2 != nullptr)
     {
-        LinkedList::Node *chosen{}; // Element chosen to be "added" to the new (merged) list
+        Node *chosen{}; // Element chosen to be "added" to the new (merged) list
 
         if (head == nullptr) // Choose next element of list 2 if list 1 is empty
         {
@@ -288,7 +328,7 @@ LinkedList::Node *LinkedList::merge(LinkedList::Node *head, LinkedList::Node *he
     return new_head; // Return head of new list
 }
 
-LinkedList::Node *LinkedList::merge_sort(LinkedList::Node *head)
+LinkedList::Node *LinkedList::merge_sort(Node *head)
 {
     if (head->next == nullptr) // Base case: the list with head node 'head' has only one element
         return head;
@@ -298,12 +338,12 @@ LinkedList::Node *LinkedList::merge_sort(LinkedList::Node *head)
     // example - 4 nodes: nullptr <- a <-> b <-> c <-> d -> nullptr
     //                                         middle
     // example - 5 nodes: nullptr <- a <-> b <-> c <-> d <-> e -> nullptr
-    LinkedList::Node *middle{get_middle_node(head)};
+    Node *middle{get_middle_node(head)};
 
     // "Split list in half"          head                                     head2
     // example - 4 nodes:    nullptr <- a <-> b -> nullptr        |   nullptr <- c <-> d -> nullptr
     // example - 5 nodes:    nullptr <- a <-> b <-> c -> nullptr  |   nullptr <- d <-> e -> nullptr
-    LinkedList::Node *head2{middle->next}; // Head node of the other "list half"
+    Node *head2{middle->next}; // Head node of the other "list half"
     head2->prev = nullptr;                 // Separate the lists
     middle->next = nullptr;
 
@@ -327,4 +367,14 @@ void LinkedList::sort()
     {
         tail = tail->next;
     }
+}
+
+bool LinkedList::is_empty() const
+{
+    return size == 0;
+}
+
+unsigned int LinkedList::get_size() const
+{
+    return size;
 }

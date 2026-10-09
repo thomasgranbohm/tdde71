@@ -1,0 +1,62 @@
+
+=============================================================================
+ Header-fil                                                                 
+=============================================================================
+
+KLAR   Kommentar: .hpp filer brukar indikera en blandning av deklaration och implementation (t.ex. catch.hpp). I den här kursen ber vi er dock separera implementation från deklaration. Byt namn till .h
+
+KLAR   Komplettering: Skriv ingen implementation i headerfilen.
+
+KLAR   Kommentar: Bra uppdelning och namn på funktioner!
+
+=============================================================================
+ Implementationsfil                                                         
+=============================================================================
+
+KLAR   Kommentar: I kopieringskonstruktorn skriver ni `this->push_back`. Eftersom ni är i LinkedList scopet kan ni skippa `this->`.
+
+KLAR   Komplettering front() och back() bör använda is_empty() för att kolla om funktionen är tom.
+
+KLAR   Kommentar: Felmeddelanden bör alltid vara unika. Exempelvis kan man beskriva vilken funktion man är i (som ni gör på ett stället) eller vad som är fel. (front och back säger båda samma "list empty)
+
+?KLAR? Kommentar: Ni behöver inte ta bort den andra listan vid flytt. Destruktorn kommer köras efter denna funktion och hantera borttagning.
+
+KLAR   Komplettering: empty_list() bör använda andra funktioner ni skapat för att tar bort element.
+
+KLAR   Komplettering: Kodduplicering mellan kopieringskonstruktorn och kopieringstilldelningsoperatorn för att kopiera element.
+
+KLAR   Kommentar: Ni behöver inte skriva LinkedList::Node när ni redan är innanför LinkedList scopet, endast Node fungerar utmärkt.
+
+=============================================================================
+ Testfil                                                                    
+=============================================================================
+
+Komplettering: En testfil ska pröva de funktioner som ni har skapat.
+ Det innebär att man vill pröva alla möjliga fall (även specialfall).
+ Testa era funktioner på listor av olika längd, inklusive noll. Testa
+ också att listan är korrekt efter varje funktionsanrop, både m.a.p head och tail.
+ Prata gärna med en assistent i labbsal om ni är osäkra på vad som saknas.
+
+Komplettering: Testa att ta anropa pop_front på en lista med ett element, och sedan anropa front()
+
+Komplettering: Testa att ta anropa pop_back på en lista med ett element, och sedan anropa back()
+
+Komplettering: Ni testar inte pop på en tom lista.
+
+Komplettering: Testar ej returvärdet av pop_back().
+
+Komplettering: Testar ej pop på en tom lista (bör kasta undantag)
+
+Kommentar/Tips: i er flytttilldelningsoperator kan ni använda std::swap. Då slipper ni skapa tillfälliga variabler som t_head osv.
+
+Komplettering: Ni testar inte självtilldelning. Dvs:
+ List l1 {}; ...
+ l1 = l1;
+
+Kommentar: Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+
+=============================================================================
+ Bonusuppgift                                                               
+=============================================================================
+
+Kommentar: Bör även testa använda listan med mer än bara to_string() efter sortering.

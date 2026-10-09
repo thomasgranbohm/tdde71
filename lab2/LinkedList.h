@@ -6,12 +6,12 @@
 class LinkedList
 {
 public:
-    LinkedList() : size{0}, head{nullptr}, tail{nullptr} {}; // ctor
+    LinkedList(); // ctor
     LinkedList(LinkedList const &other);                     // copy ctor
     LinkedList &operator=(LinkedList const &b);              // copy assignment
     LinkedList(LinkedList &&other);                          // move ctor
     LinkedList &operator=(LinkedList &&other);               // move assignment
-    ~LinkedList() { empty_list(); }                          // dtor
+    ~LinkedList(); // dtor
 
     void push_front(const int a);
     void push_back(const int a);
@@ -19,8 +19,8 @@ public:
     int pop_back();
     void sort();
 
-    bool is_empty() const { return size == 0; }
-    int get_size() const { return size; }
+    bool is_empty() const;
+    unsigned int get_size() const;
 
     int front() const;
     int back() const;
@@ -40,6 +40,7 @@ private:
     Node *head;
     Node *tail;
 
+    void add_to_list(LinkedList const& from);
     void empty_list();
     Node *get_middle_node(Node *head) const;
     Node *merge(Node *head, Node *head2);
