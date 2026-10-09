@@ -1,9 +1,10 @@
 #include "catch.hpp"
 #include "LinkedList.h"
 
-TEST_CASE("Empty list") {
+TEST_CASE("Empty list")
+{
     LinkedList a{};
-    
+
     CHECK(a.is_empty());
     CHECK(a.get_size() == 0);
     CHECK_THROWS(a.pop_back());
@@ -11,14 +12,13 @@ TEST_CASE("Empty list") {
     CHECK_THROWS(a.get(0));
 }
 
-
-TEST_CASE("List with one element") {
+TEST_CASE("List with one element")
+{
     LinkedList a{};
-        a.push_back(1);
-    
-    SECTION("add an element") {
-        a.push_back(1);
+    a.push_back(1);
 
+    SECTION("add an element")
+    {
         CHECK(a.get_size() == 1);
         CHECK_FALSE(a.is_empty());
         CHECK(a.get(0) == 1);
@@ -27,7 +27,8 @@ TEST_CASE("List with one element") {
         CHECK(a.to_string() == "[1]");
     }
 
-    SECTION("sorting") {
+    SECTION("sorting")
+    {
         a.sort();
 
         CHECK(a.get(0) == 1);
@@ -35,10 +36,9 @@ TEST_CASE("List with one element") {
         CHECK(a.back() == 1);
         CHECK(a.to_string() == "[1]");
     }
-    
+
     SECTION("remove an element")
     {
-        a.push_back(1);
         int element = a.pop_back();
 
         CHECK(element == 1);
@@ -48,19 +48,41 @@ TEST_CASE("List with one element") {
         CHECK_THROWS(a.back());
         CHECK(a.to_string() == "[]");
     }
-   
+}
+
+TEST_CASE("List with multiple elements")
+{
+    LinkedList a{};
+    a.push_back(4);
+    a.push_back(2);
+    a.push_back(0);
+
+    SECTION("remove front element")
+    {
+        CHECK(a.pop_front() == 4);
+        CHECK_THROWS(a.get(2));
+        CHECK(a.get(0) == 2);
+        CHECK(a.front() == 2);
+        CHECK(a.back() == 0);
+    }
+
+    SECTION("sorting")
+    {
+        a.sort();
+        CHECK(a.to_string() == "[0, 2, 4]");
+        CHECK(a.front() == 0);
+        CHECK(a.back() == 4);
+    }
 }
 
 TEST_CASE("Copy Constructor")
 {
     SECTION("'Other' is empty")
     {
-
     }
     SECTION("'Other' has one element")
-    
-    {
 
+    {
     }
     SECTION("'Other' has more than one element")
     {
@@ -71,7 +93,7 @@ TEST_CASE("Copy Constructor")
         a.push_back(7);
         LinkedList b{a};
         SECTION("to_string")
-        {     
+        {
             // Check b copied correctly
             CHECK(b.to_string() == "[1, 3, 3, 7]");
             // Check a is unchanged
@@ -80,7 +102,7 @@ TEST_CASE("Copy Constructor")
         SECTION("push_back")
         {
             b.push_back(5);
-            
+
             CHECK(a.back() == 7);
             CHECK(b.back() == 5);
 
@@ -100,10 +122,8 @@ TEST_CASE("Copy Constructor")
             CHECK(a.to_string() == "[1, 3, 3, 7]");
             CHECK(b.to_string() == "[5, 1, 3, 3, 7]");
         }
-
     }
 }
-
 
 // TEST_CASE("General")
 // {
