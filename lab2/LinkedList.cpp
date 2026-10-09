@@ -57,19 +57,25 @@ LinkedList &LinkedList::operator=(LinkedList &&other)
     {
         return *this;
     }
-    Node *t_head{other.head};
-    Node *t_tail{other.tail};
-    unsigned int t_size{other.size};
+    // We use std::swap instead
+    // Node *t_head{other.head};
+    // Node *t_tail{other.tail};
+    // unsigned int t_size{other.size};
 
-    other.head = head;
-    other.tail = tail;
-    other.size = size;
+    std::swap(head, other.head);
+    std::swap(tail, other.tail);
+    std::swap(size, other.size);
+    // we use std::swap instead
+    // other.head = head;
+    // other.tail = tail;
+    // other.size = size;
 
     // other.empty_list();  // Destructor will call empty_list()
 
-    head = t_head;
-    tail = t_tail;
-    size = t_size;
+    // we use std::swap instead
+    // head = t_head;
+    // tail = t_tail;
+    // size = t_size;
 
     return *this;
 }
@@ -125,14 +131,14 @@ int LinkedList::pop_front()
 
     int value{head->value};
     Node *next_head{head->next};
-    
     delete head;
     head = next_head;
-    if (next_head != nullptr) {
+
+    // If head->next was nullptr, the list is now empty...
+    if (head == nullptr)
+        tail = nullptr; // ... so reset tail.
+    else // If not, then update head's prev value.
         head->prev = nullptr;
-    } else {
-        tail = nullptr;
-    }
 
     size--;
 
@@ -146,14 +152,14 @@ int LinkedList::pop_back()
 
     int value{tail->value};
     Node *next_tail{tail->prev};
-
     delete tail;
     tail = next_tail;
-    if (next_tail != nullptr) {
+
+    // If tail->prev was nullptr, the list is now empty...
+    if (tail == nullptr)
+        head = nullptr; // ... so reset head. 
+    else // If not, then update tail's next value.
         tail->next = nullptr;
-    } else {
-        head = nullptr;
-    }
     
     size--;
 
@@ -164,21 +170,21 @@ int LinkedList::pop_back()
 int LinkedList::get(const unsigned int n) const
 {
     if (is_empty()) {
-        throw std::logic_error("calling get on an empty list");
+        throw std::logic_error("Do not call get on an empty list.");
     }
     else if (n > size - 1)
     {
         throw std::out_of_range("Parameter n is too large (in LinkedList::get)");
     }
 
-    Node curr{*head};
+    Node *curr{head};
 
     for (unsigned int i{0}; i < n; i++)
     {
-        curr = *curr.next;
+        curr = curr->next;
     }
 
-    return curr.value;
+    return curr->value;
 }
 
 int LinkedList::front() const
@@ -231,33 +237,11 @@ std::string LinkedList::to_string() const
 
 void LinkedList::empty_list()
 {
-    if (is_empty())
-        return;
-
-    // Pointer to head, ie adress of head
-    // Node *curr{head}; // curr is of pointer type
-
     while (!is_empty())
     {
         pop_front();
     }
 
-    // while (true)
-    // {
-    //     // Get pointer of next node in line
-    //     Node *n{curr->next}; // curr-> is the same as (*curr)
-
-    //     delete curr;      // delete the value at curr
-    //     if (n == nullptr) // check if end of list and break
-    //     {
-    //         break;
-    //     }
-
-    //     // otherwise, continue with n as curr
-    //     curr = n;
-    // }
-
-    size = 0;
     head = nullptr;
     tail = nullptr;
 }

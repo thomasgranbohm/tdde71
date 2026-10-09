@@ -37,19 +37,19 @@ Komplettering: En testfil ska pröva de funktioner som ni har skapat.
  också att listan är korrekt efter varje funktionsanrop, både m.a.p head och tail.
  Prata gärna med en assistent i labbsal om ni är osäkra på vad som saknas.
 
-Komplettering: Testa att ta anropa pop_front på en lista med ett element, och sedan anropa front()
+KLAR   Komplettering: Testa att ta anropa pop_front på en lista med ett element, och sedan anropa front()
 
-Komplettering: Testa att ta anropa pop_back på en lista med ett element, och sedan anropa back()
+KLAR   Komplettering: Testa att ta anropa pop_back på en lista med ett element, och sedan anropa back()
 
-Komplettering: Ni testar inte pop på en tom lista.
+KLAR   Komplettering: Ni testar inte pop på en tom lista.
 
-Komplettering: Testar ej returvärdet av pop_back().
+KLAR   Komplettering: Testar ej returvärdet av pop_back().
 
-Komplettering: Testar ej pop på en tom lista (bör kasta undantag)
+KLAR   Komplettering: Testar ej pop på en tom lista (bör kasta undantag)
 
-Kommentar/Tips: i er flytttilldelningsoperator kan ni använda std::swap. Då slipper ni skapa tillfälliga variabler som t_head osv.
+KLAR   Kommentar/Tips: i er flytttilldelningsoperator kan ni använda std::swap. Då slipper ni skapa tillfälliga variabler som t_head osv.
 
-Komplettering: Ni testar inte självtilldelning. Dvs:
+KLAR FÖR KOPIERING MEN INTE FLYTT   Komplettering: Ni testar inte självtilldelning. Dvs:
  List l1 {}; ...
  l1 = l1;
 
@@ -59,4 +59,4 @@ Kommentar: Bra tänkt med att kolla på listan efter att ni anropat std::move, m
  Bonusuppgift                                                               
 =============================================================================
 
-Kommentar: Bör även testa använda listan med mer än bara to_string() efter sortering.
+KLAR   Kommentar: Bör även testa använda listan med mer än bara to_string() efter sortering.
