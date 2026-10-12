@@ -19,7 +19,7 @@ KLAR   Komplettering front() och back() bör använda is_empty() för att kolla 
 
 KLAR   Kommentar: Felmeddelanden bör alltid vara unika. Exempelvis kan man beskriva vilken funktion man är i (som ni gör på ett stället) eller vad som är fel. (front och back säger båda samma "list empty)
 
-?KLAR? Kommentar: Ni behöver inte ta bort den andra listan vid flytt. Destruktorn kommer köras efter denna funktion och hantera borttagning.
+KLAR Kommentar: Ni behöver inte ta bort den andra listan vid flytt. Destruktorn kommer köras efter denna funktion och hantera borttagning.
 
 KLAR   Komplettering: empty_list() bör använda andra funktioner ni skapat för att tar bort element.
 
@@ -49,11 +49,11 @@ KLAR   Komplettering: Testar ej pop på en tom lista (bör kasta undantag)
 
 KLAR   Kommentar/Tips: i er flytttilldelningsoperator kan ni använda std::swap. Då slipper ni skapa tillfälliga variabler som t_head osv.
 
-KLAR FÖR KOPIERING MEN INTE FLYTT   Komplettering: Ni testar inte självtilldelning. Dvs:
+KLAR   Komplettering: Ni testar inte självtilldelning. Dvs:
  List l1 {}; ...
  l1 = l1;
 
-Kommentar: Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+KLAR   Kommentar: Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
 
 =============================================================================
  Bonusuppgift                                                               
