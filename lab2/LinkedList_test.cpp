@@ -242,6 +242,7 @@ TEST_CASE("List with multiple elements")
 TEST_CASE("Copy Constructor")
 {
     LinkedList other{};
+
     SECTION("'Other' is empty")
     {
         LinkedList b{other};
@@ -259,9 +260,8 @@ TEST_CASE("Copy Constructor")
             other.push_back(new_val);
             check_general_empty(b);
         }
-
-        // Check that modification of b doesn't affect other
     }
+    
     SECTION("'Other' has one element")
     {
         int other_val{3};
@@ -286,6 +286,7 @@ TEST_CASE("Copy Constructor")
             check_general_one_elem(b, other_val);
         }
     }
+
     SECTION("'Other' has more than one element")
     {
         std::vector<int> other_vals{};
@@ -319,6 +320,7 @@ TEST_CASE("Copy Constructor")
 TEST_CASE("Copy Assignment")
 {
     LinkedList other{};
+
     SECTION("'Other' is empty")
     {
         LinkedList b{};
@@ -342,6 +344,7 @@ TEST_CASE("Copy Assignment")
             check_general_empty(b);
         }
     }
+
     SECTION("'Other' has one element")
     {
         int other_val{3};
@@ -370,6 +373,7 @@ TEST_CASE("Copy Assignment")
             check_general_one_elem(b, other_val);
         }
     }
+    
     SECTION("'Other' has more than one element")
     {
         std::vector<int> other_vals;
