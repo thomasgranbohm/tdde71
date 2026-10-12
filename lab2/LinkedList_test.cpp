@@ -27,6 +27,9 @@ TEST_CASE("Empty list")
 
     CHECK_THROWS(a.pop_back());
     CHECK_THROWS(a.pop_front());
+
+    a.sort();
+    check_general_empty(a);
 }
 
 void check_general_one_elem(LinkedList const &l, const int v)
@@ -171,12 +174,12 @@ void check_general_mult_elem(LinkedList const &l, std::vector<int> const &l_vals
 TEST_CASE("check_general_mult_elem edge cases")
 {
     LinkedList a{};
-    std::vector<int> a_vals;
-    CHECK_THROWS(check_general_mult_elem(a, a_vals));
+    std::vector<int> a_vals{};
+    CHECK_THROWS(check_general_mult_elem(a, a_vals)); // 0 elements
     push_back(a, a_vals, 136613);
-    CHECK_THROWS(check_general_mult_elem(a, a_vals));
+    CHECK_THROWS(check_general_mult_elem(a, a_vals)); // 1 element
     push_back(a, a_vals, 13);
-    CHECK_NOTHROW(check_general_mult_elem(a, a_vals));
+    CHECK_NOTHROW(check_general_mult_elem(a, a_vals)); // 2 elements
 }
 
 // Now we do the real test with multiple elements
@@ -245,14 +248,15 @@ TEST_CASE("Copy Constructor")
         check_general_empty(b);
         check_general_empty(other); // Check that other is unchanged
 
+        int new_val{13};
         SECTION("Check that modification of b doesn't affect other")
         {
-            b.push_back(13);
+            b.push_back(new_val);
             check_general_empty(other);
         }
         SECTION("Check that modification of other doesn't affect b")
         {
-            other.push_back(13);
+            other.push_back(new_val);
             check_general_empty(b);
         }
 
@@ -260,33 +264,38 @@ TEST_CASE("Copy Constructor")
     }
     SECTION("'Other' has one element")
     {
-        int other_val = 3;
+        int other_val{3};
         other.push_back(other_val);
+
         LinkedList b{other};
+
         check_general_one_elem(b, other_val);
         check_general_one_elem(other, other_val); // Check that other is unchanged
 
+        int new_val{other_val + 31};
         SECTION("Check that modification of b doesn't affect other")
         {
             b.pop_back();
-            b.push_back(other_val + 31);
+            b.push_back(new_val);
             check_general_one_elem(other, other_val);
         }
         SECTION("Check that modification of other doesn't affect b")
         {
             other.pop_back();
-            other.push_back(other_val + 31);
+            other.push_back(new_val);
             check_general_one_elem(b, other_val);
         }
     }
     SECTION("'Other' has more than one element")
     {
-        std::vector<int> other_vals;
+        std::vector<int> other_vals{};
         push_back(other, other_vals, 1);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 7);
+
         LinkedList b{other};
+
         check_general_mult_elem(b, other_vals);
         check_general_mult_elem(other, other_vals); // Check that other is unchanged
 
@@ -309,9 +318,9 @@ TEST_CASE("Copy Constructor")
 
 TEST_CASE("Copy Assignment")
 {
+    LinkedList other{};
     SECTION("'Other' is empty")
     {
-        LinkedList other{};
         LinkedList b{};
         b = other;
         check_general_empty(b);
@@ -321,24 +330,26 @@ TEST_CASE("Copy Assignment")
         b = b;
         check_general_empty(b);
 
+        int new_val{13};
         SECTION("Check that modification of b doesn't affect other")
         {
-            b.push_back(13);
+            b.push_back(new_val);
             check_general_empty(other);
         }
         SECTION("Check that modification of other doesn't affect b")
         {
-            other.push_back(13);
+            other.push_back(new_val);
             check_general_empty(b);
         }
     }
     SECTION("'Other' has one element")
     {
-        LinkedList other{};
-        int other_val = 3;
+        int other_val{3};
         other.push_back(other_val);
+
         LinkedList b{};
         b = other;
+
         check_general_one_elem(b, other_val);
         check_general_one_elem(other, other_val); // Check that other is unchanged
 
@@ -361,14 +372,15 @@ TEST_CASE("Copy Assignment")
     }
     SECTION("'Other' has more than one element")
     {
-        LinkedList other{};
         std::vector<int> other_vals;
         push_back(other, other_vals, 1);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 7);
+
         LinkedList b{};
         b = other;
+
         check_general_mult_elem(b, other_vals);
         check_general_mult_elem(other, other_vals); // Check that other is unchanged
 
@@ -399,11 +411,12 @@ TEST_CASE("Move Constructor")
 
     SECTION("'Other' is empty")
     {
-        LinkedList b = std::move(other);
+        LinkedList b{std::move(other)};
         check_general_empty(b);
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
         check_general_empty(other); // Check that other is emptied
 
-        int new_val = 13;
+        int new_val{13};
         SECTION("Check that modification of b doesn't affect other")
         {
             b.push_back(new_val);
@@ -414,19 +427,21 @@ TEST_CASE("Move Constructor")
             other.push_back(new_val);
             check_general_empty(b);
         }
+#endif
     }
 
     SECTION("'Other' has one element")
     {
-        int other_val = 3;
+        int other_val{3};
         other.push_back(other_val);
 
-        LinkedList b = std::move(other);
+        LinkedList b{std::move(other)};
 
         check_general_one_elem(b, other_val);
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
         check_general_empty(other);
 
-        int new_val = other_val + 31;
+        int new_val{other_val + 31};
         SECTION("Check that modification of b doesn't affect other")
         {
             b.pop_back();
@@ -442,22 +457,24 @@ TEST_CASE("Move Constructor")
             check_general_one_elem(b, other_val);
             check_general_one_elem(other, new_val);
         }
+#endif
     }
 
     SECTION("'Other' has more than one element")
     {
-        std::vector<int> other_vals;
+        std::vector<int> other_vals{};
         push_back(other, other_vals, 1);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 7);
 
-        LinkedList b = std::move(other);
+        LinkedList b{std::move(other)};
 
         check_general_mult_elem(b, other_vals);
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
         check_general_empty(other);
 
-        int new_val = 315;
+        int new_val{315};
         SECTION("Check that modification of b doesn't affect other")
         {
             push_back(b, other_vals, new_val);
@@ -472,6 +489,7 @@ TEST_CASE("Move Constructor")
             check_general_mult_elem(b, other_vals);
             check_general_one_elem(other, new_val);
         }
+#endif
     }
 }
 
@@ -484,13 +502,13 @@ TEST_CASE("Move Assignment")
         LinkedList b{};
         b = std::move(other);
         check_general_empty(b);
-        check_general_empty(other);
+        // check_general_empty(other); //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
 
         // Check that self assignment doesn't change b
         b = std::move(b);
         check_general_empty(b);
-
-        int new_val = 13;
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+        int new_val{13};
         SECTION("Check that modification of b doesn't affect other")
         {
             b.push_back(new_val);
@@ -501,24 +519,26 @@ TEST_CASE("Move Assignment")
             other.push_back(new_val);
             check_general_empty(b);
         }
+#endif
     }
 
     SECTION("'Other' has one element")
     {
-        int other_val = 3;
+        int other_val{3};
         other.push_back(other_val);
 
         LinkedList b{};
         b = std::move(other);
 
         check_general_one_elem(b, other_val);
-        check_general_empty(other); // Check that other is emptied
+        // check_general_empty(other); // Check that other is emptied. //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
 
         // Check that self assignment doesn't change b
         b = std::move(b);
         check_general_one_elem(b, other_val);
 
-        int new_val = other_val + 31;
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+        int new_val{other_val + 31};
         SECTION("Check that modification of b doesn't affect other")
         {
             b.pop_back();
@@ -532,11 +552,12 @@ TEST_CASE("Move Assignment")
             check_general_one_elem(b, other_val);
             check_general_one_elem(other, new_val); // other is no longer empty
         }
+#endif
     }
 
     SECTION("'Other' has more than one element")
     {
-        std::vector<int> other_vals;
+        std::vector<int> other_vals{};
         push_back(other, other_vals, 1);
         push_back(other, other_vals, 3);
         push_back(other, other_vals, 3);
@@ -546,13 +567,15 @@ TEST_CASE("Move Assignment")
         b = std::move(other);
 
         check_general_mult_elem(b, other_vals);
-        check_general_empty(other);
+        // check_general_empty(other); // Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+
 
         // Check that self assignment doesn't change b
         b = std::move(b);
         check_general_mult_elem(b, other_vals);
 
-        int new_val = 315;
+#if 0 //  Bra tänkt med att kolla på listan efter att ni anropat std::move, men tanken är att det enda giltiga att göra med ett element som flyttats från är att kalla destruktorn på det. Att ni tittar på objektet efteråt blir därför lite konstigt.
+        int new_val{315};
         SECTION("Check that modification of b doesn't affect other")
         {
             push_back(b, other_vals, new_val);
@@ -567,5 +590,6 @@ TEST_CASE("Move Assignment")
             check_general_mult_elem(b, other_vals);
             check_general_one_elem(other, new_val);
         }
+#endif
     }
 }
