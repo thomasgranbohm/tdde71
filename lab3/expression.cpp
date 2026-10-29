@@ -11,7 +11,19 @@
 #include "operand.hpp"
 #include "postfix.hpp"
 
-Expression::Expression(Expression &&other) : root{nullptr}
+Expression::Expression(const std::string &infix)
+    : root{nullptr}
+{
+    from_infix(infix);
+}
+
+Expression::~Expression()
+{
+    delete root;
+}
+
+Expression::Expression(Expression &&other)
+    : root{nullptr}
 {
     root = other.root;
     other.root = nullptr;
@@ -80,42 +92,63 @@ void Expression::from_postfix(const std::string &postfix)
             std::unique_ptr<Node> l{std::move(stack.top())};
             stack.pop();
 
-            switch (current.at(0))
-            {
-            case Operator::signs::addition:
-                // a = new Addition{l, r};
-
-                // Note: if we don't release l and r, the pointers they hold will be
-                // deleted at the end of this loop iteration because they go out of scope
+            const char sign {current.at(0)};
+            if (sign == Operator::sign_to_char(Operator::sign::addition))
                 a = std::make_unique<Addition>(l.release(), r.release());
-                break;
-            case Operator::signs::subtraction:
-                // a = new Subtraction{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::subtraction))
                 a = std::make_unique<Subtraction>(l.release(), r.release());
-                break;
-            case Operator::signs::multiplication:
-                // a = new Multiplication{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::multiplication))
                 a = std::make_unique<Multiplication>(l.release(), r.release());
-                break;
-            case Operator::signs::division:
-                // a = new Division{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::division))
                 a = std::make_unique<Division>(l.release(), r.release());
-                break;
-            case Operator::signs::power:
-                // a = new Power{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::power))
                 a = std::make_unique<Power>(l.release(), r.release());
-                break;
-            case Operator::signs::modulo:
-                // a = new Modulo{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::modulo))
                 a = std::make_unique<Modulo>(l.release(), r.release());
-                break;
-            case Operator::signs::condition:
-                // a = new Condition{l, r};
+            else if (sign == Operator::sign_to_char(Operator::sign::condition))
                 a = std::make_unique<Condition>(l.release(), r.release());
-                break;
-            default:
-                throw std::logic_error("Undefined operator");
-            }
+            else
+                throw std::logic_error("In expression::from_postfix: "
+                                       "No operator matches the provided character.");
+
+            // if (current.at(0) == )
+
+            // switch (current.at(0))
+            // {
+            // case static_cast<int>(Operator::sign::addition):
+            //     // a = new Addition{l, r};
+
+            //     // Note: if we don't release l and r, the pointers they hold will be
+            //     // deleted at the end of this loop iteration because they go out of scope
+            //     a = std::make_unique<Addition>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::subtraction):
+            //     // a = new Subtraction{l, r};
+            //     a = std::make_unique<Subtraction>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::multiplication):
+            //     // a = new Multiplication{l, r};
+            //     a = std::make_unique<Multiplication>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::division):
+            //     // a = new Division{l, r};
+            //     a = std::make_unique<Division>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::power):
+            //     // a = new Power{l, r};
+            //     a = std::make_unique<Power>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::modulo):
+            //     // a = new Modulo{l, r};
+            //     a = std::make_unique<Modulo>(l.release(), r.release());
+            //     break;
+            // case static_cast<int>(Operator::sign::condition):
+            //     // a = new Condition{l, r};
+            //     a = std::make_unique<Condition>(l.release(), r.release());
+            //     break;
+            // default:
+            //     throw std::logic_error("Undefined operator");
+            // }
 
             stack.push(std::move(a));
         }

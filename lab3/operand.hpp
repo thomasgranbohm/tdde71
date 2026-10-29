@@ -35,10 +35,7 @@ class Integer : public Operand
 public:
     Integer(const int _value) : value{_value} {}
 
-    double evaluate() const override
-    {
-        return value;
-    }
+    double evaluate() const override { return value; }
 
     std::string get_string() const override;
 

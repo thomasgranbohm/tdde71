@@ -1,0 +1,46 @@
+
+Information om komplettering:
+  Kompletteringen kan gälla hela filen och alla filer i labben,
+  så får ni komplettering på en sak, kan samma sak förekomma på
+  fler ställen utan att jag skrivit det.
+
+  Komplettering lämnas in via sendlab efter senast en (1) vecka
+
+  Har ni frågor om kompletteringen kan ni maila mig.
+
+OBS! Att komplettering på bonusuppgifterna endast har en chans till åtgärd innan bonus går förlorad.
+
+========= Node-klasser ==========
+
+KLAR   Kommentar: enums är inte lösningen ni är ute efter. Använd statiska variabler istället. Notera också att ni gör en typomvandling när ni skickar in er enum till konstruktorn. Mer korrekt hade varit att den interna representationen i enumen är char:
+        enum signs : char
+       Jag skulle också ha valt en "scoped enum". Inte strikt nödvändigt i detta fall, men ger mer tydlighet.
+
+Nej, den används ju i Expression::from_postfix... Har mejlat om detta.
+       Komplettering: Er enum skulle kunna vara skyddad istället för publik. 
+
+KLAR   Komplettering: spara inte operatorns tecken som en datamedlem. Den kommer allokeras för
+       varje instans som skapas. Ha den istället som en literal i en funktion
+       som returnerar teknet.
+
+KLAR   Komplettering: Ni kan inte använda dynamic_cast för att avgöra ifall det går att utföra en exponentiering. Det går att skapa ett flyttal m.h.a. tex en plusnod, vilket skulle ge samma problem. Använd metoden som beskrivs i labb-instruktionen.
+
+KLAR   Komplettering: Uttryck beräknas upprepade gånger i onödan i division-klassen.
+
+KLAR   (jag tycker det som är kvar i headerfilerna är OK)
+      Komplettering: Implementera inte funktioner i header-filen. Det kan vara okej om
+        funktionen är endast en rad, men det blir snabbt stökigt i header-filen med större
+        implementationer.
+
+========= Expression ==========
+
+KLAR   Komplettering: Hjälpfunktioner ska ligga privat i klassen. Jag anser att from_infix och from_postfix är hjälpfunktioner.
+
+Kommentar: Funktionsuppdelningsmässigt skulle det ha varit snyggare om funktionen som bygger trädet returnerar en pekare, och det är sedan konstruktorn som sätter datamedlemmen och tar bort eventuella gamla träd.
+
+========= Bonus: Uttryck ==========
+
+KLAR   Komplettering (bonus): Använd inte en global variabel för listan av uttryck. Skicka
+        instället med listan till rätt funktion vid rätt tillfälle. Att använda en global
+        variabel är en genväg som leder till att man funderar mindre på hur man på bästa sätt
+        designar sina funktioner. Man skulle också kunna överväga att bygga en klass av huvudprogrammet.

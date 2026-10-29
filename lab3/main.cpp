@@ -5,10 +5,9 @@
 
 #include "expression.hpp"
 
-std::vector<Expression> saved_expressions{};
-
 // Returns false if program should quit
-bool process_command(const std::string &command, Expression &e)
+bool process_command(const std::string &command, Expression &e,
+                     std::vector<Expression> &saved_expressions)
 {
     if (command == "calc")
         std::cout << e.evaluate() << std::endl;
@@ -51,7 +50,8 @@ bool process_command(const std::string &command, Expression &e)
             else if (static_cast<unsigned int>(index) > saved_expressions.size() || index < 1)
                 throw std::logic_error("There is no expression at index " + std::to_string(index));
 
-            e.from_postfix(saved_expressions.at(index - 1).to_postfix());
+            // e.from_postfix(saved_expressions.at(index - 1).to_postfix());
+            e = Expression{saved_expressions.at(index - 1).to_infix()};
         }
         else
             throw std::logic_error("Invalid command");
@@ -64,6 +64,7 @@ int main()
 {
     std::string line{};
     Expression e{};
+    std::vector<Expression> saved_expressions{};
 
     while (std::getline(std::cin, line))
     {
@@ -74,12 +75,13 @@ int main()
 
             if (line.at(0) == ':') // If input is command
             {
-                if (!process_command(line.substr(1), e))
+                if (!process_command(line.substr(1), e, saved_expressions))
                     break; // command was :quit
             }
             else
             {
-                e.from_infix(line);
+                // e.from_infix(line);
+                e = Expression{line};
             }
         }
 

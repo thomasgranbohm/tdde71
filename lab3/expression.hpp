@@ -8,20 +8,18 @@
 class Expression
 {
 public:
-    Expression() : root{nullptr} {}
-    Expression(const std::string &infix) : root{nullptr} { from_infix(infix); }
+    Expression()
+        : root{nullptr} {}
 
-    ~Expression() { delete root; }
+    Expression(const std::string &infix);
+
+    ~Expression();
 
     Expression(const Expression &) = delete;
     Expression &operator=(const Expression &) = delete;
 
     Expression(Expression &&other);
     Expression &operator=(Expression &&other);
-
-    void from_postfix(const std::string &postfix);
-
-    void from_infix(const std::string &infix);
 
     std::string to_postfix() const;
 
@@ -32,6 +30,10 @@ public:
     double evaluate() const;
 
 private:
+    void from_postfix(const std::string &postfix);
+
+    void from_infix(const std::string &infix);
+
     Node *root;
 };
 

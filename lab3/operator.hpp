@@ -9,7 +9,7 @@
 class Operator : public Node
 {
 public:
-    ~Operator() { delete child_left; delete child_right; } // Node::~Node is called after this
+    ~Operator();
 
     Operator(const Operator &) = delete;
     Operator &operator=(const Operator &) = delete;
@@ -18,7 +18,7 @@ public:
     std::string prefix() const override;
     std::string infix() const override;
 
-    enum signs
+    enum class sign : char
     {
         addition = '+',
         subtraction = '-',
@@ -29,13 +29,13 @@ public:
         condition = '?'
     };
 
-protected:
-    Operator(
-        const char _sign,
-        Node *_child_left,
-        Node *_child_right) : sign{_sign}, child_left{_child_left}, child_right{_child_right} {}
+    static char sign_to_char(Operator::sign _sign);
 
-    char sign;
+protected:
+    Operator(Node *_child_left, Node *_child_right)
+        : child_left{_child_left}, child_right{_child_right} {}
+
+    virtual char get_sign() const = 0;
     Node *child_left;
     Node *child_right;
 };
@@ -43,65 +43,84 @@ protected:
 class Addition : public Operator
 {
 public:
-    Addition(Node *_child_left, Node *_child_right) : Operator{Operator::signs::addition, _child_left, _child_right} {}
+    Addition(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
-    double evaluate() const override
-    {
-        return child_left->evaluate() + child_right->evaluate();
-    }
+    double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::addition); }
 };
 
 class Subtraction : public Operator
 {
 public:
-    Subtraction(Node *_child_left, Node *_child_right) : Operator{Operator::signs::subtraction, _child_left, _child_right} {}
+    Subtraction(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
-    double evaluate() const override
-    {
-        return child_left->evaluate() - child_right->evaluate();
-    }
+    double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::subtraction); }
 };
 
 class Multiplication : public Operator
 {
 public:
-    Multiplication(Node *_child_left, Node *_child_right) : Operator{Operator::signs::multiplication, _child_left, _child_right} {}
+    Multiplication(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
-    double evaluate() const override
-    {
-        return child_left->evaluate() * child_right->evaluate();
-    }
+    double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::multiplication); }
 };
 
 class Division : public Operator
 {
 public:
-    Division(Node *_child_left, Node *_child_right) : Operator{Operator::signs::division, _child_left, _child_right} {}
+    Division(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
     double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::division); }
 };
 
 class Power : public Operator
 {
 public:
-    Power(Node *_child_left, Node *_child_right) : Operator{Operator::signs::power, _child_left, _child_right} {}
+    Power(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
     double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::power); }
 };
 
 class Modulo : public Operator
 {
 public:
-    Modulo(Node *_child_left, Node *_child_right) : Operator{Operator::signs::modulo, _child_left, _child_right} {}
+    Modulo(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
-    double evaluate() const override { return fmod(child_left->evaluate(), child_right->evaluate()); }
+    double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::modulo); }
 };
 
 class Condition : public Operator
 {
 public:
-    Condition(Node *_child_left, Node *_child_right) : Operator{Operator::signs::condition, _child_left, _child_right} {}
+    Condition(Node *_child_left, Node *_child_right)
+        : Operator{_child_left, _child_right} {}
 
     double evaluate() const override;
+
+private:
+    char get_sign() const override { return sign_to_char(sign::condition); }
 };
 #endif
