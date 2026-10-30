@@ -8,9 +8,14 @@ Operator::~Operator()
     delete child_right;
 } // Node::~Node is called after this
 
-char Operator::sign_to_char(Operator::sign _sign)
+char op_sign::sign_to_char(op_sign::sign _sign)
 {
     return static_cast<char>(_sign);
+}
+
+op_sign::sign op_sign::char_to_sign(char _char)
+{
+    return static_cast<op_sign::sign>(_char);
 }
 
 std::string Operator::postfix() const

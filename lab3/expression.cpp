@@ -92,24 +92,34 @@ void Expression::from_postfix(const std::string &postfix)
             std::unique_ptr<Node> l{std::move(stack.top())};
             stack.pop();
 
-            const char sign {current.at(0)};
-            if (sign == Operator::sign_to_char(Operator::sign::addition))
-                a = std::make_unique<Addition>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::subtraction))
-                a = std::make_unique<Subtraction>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::multiplication))
-                a = std::make_unique<Multiplication>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::division))
-                a = std::make_unique<Division>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::power))
-                a = std::make_unique<Power>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::modulo))
-                a = std::make_unique<Modulo>(l.release(), r.release());
-            else if (sign == Operator::sign_to_char(Operator::sign::condition))
-                a = std::make_unique<Condition>(l.release(), r.release());
-            else
-                throw std::logic_error("In expression::from_postfix: "
-                                       "No operator matches the provided character.");
+            const op_sign::sign sign {op_sign::char_to_sign(current.at(0))};
+            switch (sign)
+            {
+                case op_sign::sign::addition:
+                    a = std::make_unique<Addition>(l.release(), r.release());
+                    break;
+                case op_sign::sign::subtraction:
+                    a = std::make_unique<Subtraction>(l.release(), r.release());
+                    break;
+                case op_sign::sign::multiplication:
+                    a = std::make_unique<Multiplication>(l.release(), r.release());
+                    break;
+                case op_sign::sign::division:
+                    a = std::make_unique<Division>(l.release(), r.release());
+                    break;
+                case op_sign::sign::power:
+                    a = std::make_unique<Power>(l.release(), r.release());
+                    break;
+                case op_sign::sign::modulo:
+                    a = std::make_unique<Modulo>(l.release(), r.release());
+                    break;
+                case op_sign::sign::condition:
+                    a = std::make_unique<Condition>(l.release(), r.release());
+                    break;
+                default:
+                    throw std::logic_error("In expression::from_postfix: "
+                                           "No operator matches the provided character.");
+            }
 
             stack.push(std::move(a));
         }

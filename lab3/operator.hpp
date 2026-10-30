@@ -6,18 +6,9 @@
 
 #include <cmath>
 
-class Operator : public Node
+
+namespace op_sign
 {
-public:
-    ~Operator();
-
-    Operator(const Operator &) = delete;
-    Operator &operator=(const Operator &) = delete;
-
-    std::string postfix() const override;
-    std::string prefix() const override;
-    std::string infix() const override;
-
     enum class sign : char
     {
         addition = '+',
@@ -29,7 +20,24 @@ public:
         condition = '?'
     };
 
-    static char sign_to_char(Operator::sign _sign);
+    char sign_to_char(sign _sign);
+
+    sign char_to_sign(char _char);
+}
+
+
+
+class Operator : public Node
+{
+public:
+    ~Operator();
+
+    Operator(const Operator &) = delete;
+    Operator &operator=(const Operator &) = delete;
+
+    std::string postfix() const override;
+    std::string prefix() const override;
+    std::string infix() const override;
 
 protected:
     Operator(Node *_child_left, Node *_child_right)
@@ -49,7 +57,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::addition); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::addition); }
 };
 
 class Subtraction : public Operator
@@ -61,7 +69,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::subtraction); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::subtraction); }
 };
 
 class Multiplication : public Operator
@@ -73,7 +81,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::multiplication); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::multiplication); }
 };
 
 class Division : public Operator
@@ -85,7 +93,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::division); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::division); }
 };
 
 class Power : public Operator
@@ -97,7 +105,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::power); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::power); }
 };
 
 class Modulo : public Operator
@@ -109,7 +117,7 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::modulo); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::modulo); }
 };
 
 class Condition : public Operator
@@ -121,6 +129,6 @@ public:
     double evaluate() const override;
 
 private:
-    char get_sign() const override { return sign_to_char(sign::condition); }
+    char get_sign() const override { return op_sign::sign_to_char(op_sign::sign::condition); }
 };
 #endif

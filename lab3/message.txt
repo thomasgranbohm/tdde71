@@ -16,8 +16,9 @@ KLAR   Kommentar: enums är inte lösningen ni är ute efter. Använd statiska v
         enum signs : char
        Jag skulle också ha valt en "scoped enum". Inte strikt nödvändigt i detta fall, men ger mer tydlighet.
 
-Nej, den används ju i Expression::from_postfix... Har mejlat om detta.
+Edit: vi fick lägga den (publikt) utanför klassen.
        Komplettering: Er enum skulle kunna vara skyddad istället för publik. 
+       Nej, den används ju i Expression::from_postfix... Har mejlat om detta.
 
 KLAR   Komplettering: spara inte operatorns tecken som en datamedlem. Den kommer allokeras för
        varje instans som skapas. Ha den istället som en literal i en funktion
